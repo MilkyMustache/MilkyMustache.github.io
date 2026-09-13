@@ -239,31 +239,62 @@
   .bom-group{ margin-bottom: 26px; }
   .bom-group:last-child{ margin-bottom: 0; }
 
-  /* ---------- projects ---------- */
+  /* ---------- projects: sky / cloud theme, side by side ---------- */
+  #projects{
+    --sky-1: #EAF5FC;
+    --sky-2: #CFE9F7;
+    --sky-ink: #16324A;
+    --sky-muted: #4C7089;
+    --sky-line: #2E5C7D;
+    --sky-line-faint: rgba(46,92,125,0.18);
+    background:
+      radial-gradient(60px 34px at 12% 22%, rgba(255,255,255,0.9), rgba(255,255,255,0) 70%),
+      radial-gradient(90px 46px at 22% 18%, rgba(255,255,255,0.85), rgba(255,255,255,0) 72%),
+      radial-gradient(70px 38px at 78% 12%, rgba(255,255,255,0.8), rgba(255,255,255,0) 70%),
+      radial-gradient(100px 50px at 88% 20%, rgba(255,255,255,0.75), rgba(255,255,255,0) 72%),
+      radial-gradient(80px 40px at 55% 8%, rgba(255,255,255,0.7), rgba(255,255,255,0) 72%),
+      linear-gradient(180deg, var(--sky-1), var(--sky-2));
+    background-color: var(--sky-2);
+    color: var(--sky-ink);
+  }
+  #projects .section-inner{ grid-template-columns: 1fr; gap: 18px; }
+  #projects .sheet-tab{ color: var(--sky-muted); }
+  #projects .sheet-tab .num{ color: var(--sky-line); }
+  #projects h2{ color: var(--sky-ink); }
+
+  .projects-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  @media (max-width: 640px){
+    .projects-grid{ grid-template-columns: 1fr; }
+  }
+
   .project{
-    border: 1px solid var(--line-faint);
-    background: var(--bg-panel);
-    padding: 22px clamp(16px,3vw,28px);
-    margin-bottom: 18px;
+    border: 1px solid var(--sky-line-faint);
+    background: rgba(255,255,255,0.65);
+    backdrop-filter: blur(2px);
+    padding: 20px clamp(14px,2vw,22px);
+    display: flex;
+    flex-direction: column;
   }
-  .project:last-child{ margin-bottom: 0; }
   .project-head{
-    display:flex; justify-content:space-between; gap: 14px; flex-wrap: wrap;
-    align-items: baseline;
-    margin-bottom: 10px;
+    display:flex; flex-direction: column; gap: 6px;
+    margin-bottom: 12px;
   }
-  .project-head h3{ font-size: 1.05rem; }
+  .project-head h3{ font-size: 1rem; color: var(--sky-ink); }
   .project-role{
     font-family:'IBM Plex Mono', monospace;
-    font-size: 11.5px;
-    color: var(--accent);
+    font-size: 11px;
+    color: var(--sky-line);
     letter-spacing: 0.02em;
   }
   .project ul{
-    margin: 0; padding-left: 18px; color: var(--muted);
+    margin: 0; padding-left: 18px; color: var(--sky-muted);
   }
-  .project li{ margin-bottom: 6px; }
-  .project li::marker{ color: var(--line); }
+  .project li{ margin-bottom: 6px; font-size: 14px; }
+  .project li::marker{ color: var(--sky-line); }
   .project li:last-child{ margin-bottom:0; }
 
   /* ---------- awards ---------- */
@@ -440,6 +471,7 @@
       <div>
         <h2>Projects</h2>
 
+        <div class="projects-grid">
         <div class="project">
           <div class="project-head">
             <h3>FIRST Robotics Competition — Robot Design</h3>
@@ -472,6 +504,20 @@
             <li>Designed a sequential digital circuit that displays a pre-stored date across six seven-segment displays on a button press.</li>
             <li>Implemented shift registers, D and JK flip-flops, and AND/OR gate logic to store and transition between circuit states, then wired, tested, and debugged the hardware.</li>
           </ul>
+        </div>
+
+        <div class="project">
+          <div class="project-head">
+            <h3>Transformium AI Swarm</h3>
+            <span class="project-role">AI-ASSISTED HARDWARE ENGINEERING</span>
+          </div>
+          <ul>
+            <li>Designed a multi-agent AI system where specialized agents across Mechanical, Electrical, and Systems teams collaborate under a chief coordinating agent to reduce single-model blind spots in combat-robot design.</li>
+            <li>Structured the workflow around six iteration stages — define/validate, design/model, build/integrate, test/analyze, iterate/optimize, and deploy/learn — so agents converge on a design in rapid cycles rather than one long pass.</li>
+            <li>Built conflict detection so the swarm flags contradictions as requirements change and automatically adapts the mechanical design to resolve them.</li>
+            <li>Grounded agent output in deterministic validation, physical-margin checks, and PyBullet rigid-body simulation, running the collaboration in the cloud to keep it reliable and scalable.</li>
+          </ul>
+        </div>
         </div>
       </div>
     </div>
