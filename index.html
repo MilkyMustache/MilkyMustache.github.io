@@ -1,8 +1,605 @@
-﻿
-<html>
-  <body>
-	<p>The Iron Man!</p>
-	<p>The BEST Weather Station ever!!!!</p>
-	<p>HELLLLO</p>
-  </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eric Klabel — Electrical Engineering</title>
+<meta name="description" content="Eric Klabel — Electrical Engineering student at UIUC. Circuit design, embedded systems, and robotics.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #F1F3EE;
+    --bg-panel: #FAFBF8;
+    --ink: #142420;
+    --muted: #5B6B62;
+    --line: #24413A;
+    --line-faint: rgba(20,36,32,0.14);
+    --grid: rgba(20,36,32,0.07);
+    --accent: #C1793D;
+    --accent-glow: #FFB05C;
+    --max: 760px;
+    --gutter: clamp(20px, 6vw, 64px);
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* graph-paper base texture */
+  body{
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  a{ color: inherit; }
+
+  .mono{
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  }
+
+  h1, h2, h3{
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  p{ margin: 0; }
+
+  .wrap{
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+
+  /* ---------- top rail ---------- */
+  .toprail{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    padding: 22px var(--gutter);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--line-faint);
+  }
+  .toprail .dot{
+    display:inline-block;
+    width:7px; height:7px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-right:8px;
+    box-shadow: 0 0 0 3px rgba(193,121,61,0.15);
+  }
+  .toprail nav a{
+    margin-left: 22px;
+    text-decoration:none;
+    color: var(--ink);
+    border-bottom: 1px solid transparent;
+  }
+  .toprail nav a:hover{ border-bottom-color: var(--accent); }
+
+  /* ---------- hero ---------- */
+  .hero{
+    padding: 64px var(--gutter) 40px;
+    max-width: 920px;
+    margin: 0 auto;
+  }
+  .hero .kicker{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+    margin-bottom: 18px;
+  }
+  .hero h1{
+    font-size: clamp(2.4rem, 6vw, 3.6rem);
+    line-height: 1.05;
+    max-width: 14ch;
+  }
+  .hero .role{
+    margin-top: 18px;
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 46ch;
+  }
+  .hero .role strong{ color: var(--ink); font-weight: 600; }
+
+  .circuit-wrap{
+    margin-top: 44px;
+    border: 1px solid var(--line-faint);
+    background: var(--bg-panel);
+    padding: 18px clamp(16px,4vw,36px);
+  }
+  .circuit-wrap svg{ width:100%; height:auto; display:block; }
+  .circuit-wrap .cap{
+    display:flex; justify-content:space-between;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px; color: var(--muted);
+    margin-top: 10px;
+    letter-spacing: 0.03em;
+  }
+
+  path.trace{
+    fill:none;
+    stroke: var(--line);
+    stroke-width: 2;
+    stroke-linecap: square;
+    stroke-dasharray: 900;
+    stroke-dashoffset: 900;
+    animation: draw 2.4s ease forwards;
+  }
+  circle.node{
+    fill: var(--bg-panel);
+    stroke: var(--line);
+    stroke-width: 2;
+  }
+  circle.led{
+    fill: #E7E2D3;
+    stroke: var(--line);
+    stroke-width: 2;
+    animation: light 0.6s ease forwards 2.2s;
+  }
+  @keyframes draw{ to{ stroke-dashoffset: 0; } }
+  @keyframes light{
+    to{ fill: var(--accent-glow); filter: drop-shadow(0 0 6px var(--accent-glow)); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    path.trace{ animation: none; stroke-dashoffset: 0; }
+    circle.led{ animation: none; fill: var(--accent-glow); }
+  }
+
+  /* ---------- sections ---------- */
+  section{
+    padding: 56px var(--gutter);
+    border-top: 1px solid var(--line-faint);
+  }
+  .section-inner{
+    max-width: 920px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 32px;
+  }
+  .sheet-tab{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  .sheet-tab .num{ color: var(--accent); }
+  section h2{
+    font-size: 1.5rem;
+    margin-bottom: 22px;
+  }
+  @media (max-width: 640px){
+    .section-inner{ grid-template-columns: 1fr; gap: 10px; }
+  }
+
+  /* ---------- education ---------- */
+  .edu-line{ display:flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: baseline; }
+  .edu-line .school{ font-weight:600; }
+  .edu-line .date{ font-family:'IBM Plex Mono', monospace; font-size: 12.5px; color: var(--muted); }
+  .edu-meta{ color: var(--muted); margin-top: 6px; }
+  .tag-row{ margin-top: 14px; display:flex; flex-wrap:wrap; gap: 8px; }
+  .tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    padding: 4px 9px;
+    border: 1px solid var(--line-faint);
+    color: var(--muted);
+  }
+
+  /* ---------- skills as parts list (BOM) ---------- */
+  table.bom{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  table.bom caption{
+    text-align:left;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+  }
+  table.bom th{
+    text-align:left;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 500;
+    padding: 6px 10px 6px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  table.bom td{
+    padding: 9px 10px 9px 0;
+    border-bottom: 1px solid var(--line-faint);
+    vertical-align: top;
+  }
+  table.bom td.idx{
+    font-family:'IBM Plex Mono', monospace;
+    color: var(--accent);
+    width: 34px;
+  }
+  .bom-group{ margin-bottom: 26px; }
+  .bom-group:last-child{ margin-bottom: 0; }
+
+  /* ---------- projects ---------- */
+  .project{
+    border: 1px solid var(--line-faint);
+    background: var(--bg-panel);
+    padding: 22px clamp(16px,3vw,28px);
+    margin-bottom: 18px;
+  }
+  .project:last-child{ margin-bottom: 0; }
+  .project-head{
+    display:flex; justify-content:space-between; gap: 14px; flex-wrap: wrap;
+    align-items: baseline;
+    margin-bottom: 10px;
+  }
+  .project-head h3{ font-size: 1.05rem; }
+  .project-role{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+  }
+  .project ul{
+    margin: 0; padding-left: 18px; color: var(--muted);
+  }
+  .project li{ margin-bottom: 6px; }
+  .project li::marker{ color: var(--line); }
+  .project li:last-child{ margin-bottom:0; }
+
+  /* ---------- awards ---------- */
+  .award{
+    display:grid;
+    grid-template-columns: 90px 1fr;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line-faint);
+  }
+  .award:last-child{ border-bottom:none; }
+  .award .date{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: var(--muted);
+  }
+  .award .title{ font-weight: 500; }
+
+  /* ---------- experience ---------- */
+  .job{ margin-bottom: 26px; }
+  .job:last-child{ margin-bottom: 0; }
+  .job-head{ display:flex; justify-content:space-between; gap: 14px; flex-wrap: wrap; align-items:baseline; margin-bottom: 8px;}
+  .job-head .org{ font-weight: 600; }
+  .job-head .date{ font-family:'IBM Plex Mono', monospace; font-size: 11.5px; color: var(--muted); }
+  .job ul{ margin:0; padding-left: 18px; color: var(--muted); }
+  .job li{ margin-bottom: 6px; }
+  .job li:last-child{ margin-bottom:0; }
+  .job li::marker{ color: var(--line); }
+
+  /* ---------- title block / footer ---------- */
+  footer{
+    border-top: 1px solid var(--line);
+    padding: 0 var(--gutter) 48px;
+  }
+  .titleblock{
+    max-width: 920px;
+    margin: 40px auto 0;
+    border: 1px solid var(--line);
+  }
+  .tb-row{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .tb-cell{
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 12px 14px;
+  }
+  .tb-cell:last-child{ border-right: none; }
+  .tb-row:last-child .tb-cell{ border-bottom: none; }
+  .tb-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.03em;
+    margin-bottom: 4px;
+  }
+  .tb-value{ font-size: 14px; }
+  .tb-value a{ text-decoration: none; border-bottom: 1px solid var(--line-faint); }
+  .tb-value a:hover{ border-bottom-color: var(--accent); }
+  @media (max-width: 640px){
+    .tb-row{ grid-template-columns: repeat(2, 1fr); }
+  }
+  .foot-note{
+    max-width: 920px;
+    margin: 20px auto 0;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+  <div class="toprail">
+    <span><span class="dot"></span>EK / EE&nbsp;2030</span>
+    <nav>
+      <a href="#education">Education</a>
+      <a href="#skills">Skills</a>
+      <a href="#projects">Projects</a>
+      <a href="#experience">Experience</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+
+  <header class="hero">
+    <div class="kicker">ELECTRICAL ENGINEERING — SHEET 1 / 6</div>
+    <h1>Eric Klabel</h1>
+    <p class="role">
+      Freshman <strong>Electrical Engineering</strong> student at the University of Illinois
+      Urbana&#8209;Champaign. I build circuits, embedded systems, and the sensor stacks
+      that let robots know where they are.
+    </p>
+
+    <div class="circuit-wrap">
+      <svg viewBox="0 0 640 160" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Animated line drawing of a simple LED circuit lighting up">
+        <path class="trace" d="M20,80 L120,80 L120,40 L260,40 L260,80 L340,80 M340,80 L340,40 L420,40 M420,80 L500,80 L500,40 L560,40" />
+        <!-- resistor zigzag -->
+        <path class="trace" d="M180,40 l8,-14 l14,28 l14,-28 l14,28 l14,-28 l8,14" style="animation-delay:0.15s;" />
+        <!-- switch -->
+        <circle class="node" cx="340" cy="80" r="4" />
+        <circle class="node" cx="420" cy="80" r="4" />
+        <path class="trace" d="M340,80 L400,55" style="animation-delay:0.3s; stroke-dasharray:70; stroke-dashoffset:70;" />
+        <!-- battery -->
+        <path class="trace" d="M20,80 L20,110 M60,60 L60,130" style="animation-delay:0.4s;" />
+        <path class="trace" d="M20,110 L20,80 M0,95 L20,95 M0,120 L20,120" style="animation-delay:0.4s;" />
+        <!-- LED bulb -->
+        <circle class="node" cx="590" cy="40" r="18" />
+        <circle class="led" cx="590" cy="40" r="10" />
+        <path class="trace" d="M560,40 L572,40" style="animation-delay:0.5s; stroke-dasharray:20; stroke-dashoffset:20;" />
+      </svg>
+      <div class="cap">
+        <span>FIG. 1 — LED DRIVER, SWITCHED</span>
+        <span>SCALE N.T.S.</span>
+      </div>
+    </div>
+  </header>
+
+  <section id="education">
+    <div class="section-inner">
+      <div class="sheet-tab"><span class="num">02</span> / EDUCATION</div>
+      <div>
+        <h2>Education</h2>
+        <div class="edu-line">
+          <span class="school">University of Illinois Urbana&#8209;Champaign</span>
+          <span class="date">Expected May 2030</span>
+        </div>
+        <p class="edu-meta">B.S. Electrical Engineering — James Scholar Honors Program</p>
+        <div class="tag-row">
+          <span class="tag">Intro to Electronics</span>
+          <span class="tag">First Year Design Laboratory</span>
+          <span class="tag">Intro Differential Equations</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="section-inner">
+      <div class="sheet-tab"><span class="num">03</span> / SKILLS</div>
+      <div>
+        <h2>Skills</h2>
+
+        <div class="bom-group">
+          <table class="bom">
+            <caption>TECHNICAL — CIRCUITS &amp; SYSTEMS</caption>
+            <thead><tr><th class="idx">#</th><th>Skill</th></tr></thead>
+            <tbody id="tech-skills"></tbody>
+          </table>
+        </div>
+
+        <div class="bom-group">
+          <table class="bom">
+            <caption>TECHNICAL — SOFTWARE</caption>
+            <thead><tr><th class="idx">#</th><th>Skill</th></tr></thead>
+            <tbody id="sw-skills"></tbody>
+          </table>
+        </div>
+
+        <div class="bom-group">
+          <table class="bom">
+            <caption>LAB TOOLS &amp; ENVIRONMENTS</caption>
+            <thead><tr><th class="idx">#</th><th>Tool</th></tr></thead>
+            <tbody id="tool-skills"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="section-inner">
+      <div class="sheet-tab"><span class="num">04</span> / PROJECTS</div>
+      <div>
+        <h2>Projects</h2>
+
+        <div class="project">
+          <div class="project-head">
+            <h3>FIRST Robotics Competition — Robot Design</h3>
+            <span class="project-role">LEAD ELECTRICAL DESIGNER</span>
+          </div>
+          <ul>
+            <li>Integrated analog sensors and control systems — cameras, motor encoders, and optical sensors — for game element tracking, improving odometry accuracy by 45% and enabling precise goal-scoring localization.</li>
+            <li>Built data-processing pipelines converting sensor input into control signals, using encoder feedback for PID-based motor control and AprilTag detection.</li>
+          </ul>
+        </div>
+
+        <div class="project">
+          <div class="project-head">
+            <h3>Arduino LED Array &amp; Embedded Control System</h3>
+            <span class="project-role">PERSONAL PROJECT</span>
+          </div>
+          <ul>
+            <li>Designed and built an interactive 30+ LED array driven by an Arduino, written in C++.</li>
+            <li>Soldered and wired the full circuit; implemented PWM for brightness control and dynamic lighting patterns.</li>
+            <li>Wrote embedded software processing analog potentiometer input and digital button input to drive multiple LED outputs, debugging connections along the way.</li>
+          </ul>
+        </div>
+
+        <div class="project">
+          <div class="project-head">
+            <h3>Digital Birthday Display Circuit</h3>
+            <span class="project-role">DUAL CREDIT ELECTRONICS PROJECT</span>
+          </div>
+          <ul>
+            <li>Designed a sequential digital circuit that displays a pre-stored date across six seven-segment displays on a button press.</li>
+            <li>Implemented shift registers, D and JK flip-flops, and AND/OR gate logic to store and transition between circuit states, then wired, tested, and debugged the hardware.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="awards">
+    <div class="section-inner">
+      <div class="sheet-tab"><span class="num">05</span> / AWARDS</div>
+      <div>
+        <h2>Awards</h2>
+
+        <div class="award">
+          <span class="date">MAR 2026</span>
+          <span class="title">3rd Place, Design Award — Ross Division, FIRST Tech Challenge World Championship (top in the world)</span>
+        </div>
+        <div class="award">
+          <span class="date">FEB 2026</span>
+          <span class="title">Qualified for the Illinois VEX V5 Robotics Competition State Championship</span>
+        </div>
+        <div class="award">
+          <span class="date">OCT 2025</span>
+          <span class="title">Guinness World Record Holder — Tallest Toothpick Structure</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="experience">
+    <div class="section-inner">
+      <div class="sheet-tab"><span class="num">06</span> / EXPERIENCE</div>
+      <div>
+        <h2>Experience</h2>
+
+        <div class="job">
+          <div class="job-head">
+            <span class="org">High School Robotics Club — Executive Board President</span>
+            <span class="date">OCT 2018 – MAY 2026</span>
+          </div>
+          <ul>
+            <li>Led team operations, strategy, and member coordination as Executive Board President.</li>
+            <li>Served as lead designer and builder for a competitive VEX Robotics Competition team, overseeing development from concept through competition.</li>
+          </ul>
+        </div>
+
+        <div class="job">
+          <div class="job-head">
+            <span class="org">Kids STEM Studio LLC — Robotics Instructor</span>
+            <span class="date">SEP 2024 – MAR 2025</span>
+          </div>
+          <ul>
+            <li>Taught robotics fundamentals and introductory programming (JavaScript and block code) to students aged 5–12, including students with special needs.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer id="contact">
+    <div class="titleblock">
+      <div class="tb-row">
+        <div class="tb-cell">
+          <div class="tb-label">DRAWN BY</div>
+          <div class="tb-value">Eric Klabel</div>
+        </div>
+        <div class="tb-cell">
+          <div class="tb-label">LOCATION</div>
+          <div class="tb-value">Naperville, Illinois</div>
+        </div>
+        <div class="tb-cell">
+          <div class="tb-label">EMAIL</div>
+          <div class="tb-value"><a href="mailto:eklabel4321@gmail.com">eklabel4321@gmail.com</a></div>
+        </div>
+        <div class="tb-cell">
+          <div class="tb-label">SHEET</div>
+          <div class="tb-value">6 OF 6</div>
+        </div>
+      </div>
+      <div class="tb-row">
+        <div class="tb-cell">
+          <div class="tb-label">GITHUB</div>
+          <div class="tb-value"><a href="#" id="github-link">github.com/yourhandle</a></div>
+        </div>
+        <div class="tb-cell">
+          <div class="tb-label">LINKEDIN</div>
+          <div class="tb-value"><a href="#" id="linkedin-link">linkedin.com/in/yourhandle</a></div>
+        </div>
+        <div class="tb-cell">
+          <div class="tb-label">RESUME</div>
+          <div class="tb-value"><a href="#" id="resume-link">Download PDF</a></div>
+        </div>
+        <div class="tb-cell">
+          <div class="tb-label">REV.</div>
+          <div class="tb-value" id="rev-date">2026</div>
+        </div>
+      </div>
+    </div>
+    <div class="foot-note">Built for GitHub Pages. Edit the &lt;!-- EDIT ME --&gt; sections in index.html to update content.</div>
+  </footer>
+
+<script>
+  // ---- EDIT ME: skills data -------------------------------------------
+  const techSkills = [
+    "Circuit Design","Soldering","3D Printing","Electrical Troubleshooting",
+    "Arduino","Breadboard Design","FPGA","Motor Drivers","Encoders","IMUs",
+    "Cameras","Servo Systems","Sensor Integration","Gates","Registers",
+    "Flip-Flops","Transistor Circuits"
+  ];
+  const swSkills = ["Java","Python","C++"];
+  const toolSkills = ["Multisim","Falstad","Fusion 360","Onshape","Oscilloscope","Multimeter","Serial Plotter"];
+
+  function fillTable(id, items){
+    const tbody = document.getElementById(id);
+    tbody.innerHTML = items.map((item, i) =>
+      `<tr><td class="idx mono">${String(i+1).padStart(2,'0')}</td><td>${item}</td></tr>`
+    ).join('');
+  }
+  fillTable('tech-skills', techSkills);
+  fillTable('sw-skills', swSkills);
+  fillTable('tool-skills', toolSkills);
+
+  // ---- EDIT ME: links ----------------------------------------------------
+  // Update these to your real profiles / resume file before publishing.
+  document.getElementById('github-link').href = "https://github.com/yourhandle";
+  document.getElementById('linkedin-link').href = "https://linkedin.com/in/yourhandle";
+  document.getElementById('resume-link').href = "resume.pdf";
+
+  document.getElementById('rev-date').textContent = new Date().getFullYear();
+</script>
+
+</body>
 </html>
