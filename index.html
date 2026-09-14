@@ -10,15 +10,15 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #F1F3EE;
-    --bg-panel: #FAFBF8;
-    --ink: #142420;
-    --muted: #5B6B62;
-    --line: #24413A;
-    --line-faint: rgba(20,36,32,0.14);
-    --grid: rgba(20,36,32,0.07);
-    --accent: #C1793D;
-    --accent-glow: #FFB05C;
+    --bg-1: #EAF5FC;
+    --bg-2: #BFE0F5;
+    --bg-panel: rgba(255,255,255,0.62);
+    --ink: #15304A;
+    --muted: #4C7089;
+    --line: #2E5C7D;
+    --line-faint: rgba(46,92,125,0.20);
+    --accent: #F0A63D;
+    --accent-glow: #FFCF7A;
     --max: 760px;
     --gutter: clamp(20px, 6vw, 64px);
   }
@@ -27,7 +27,6 @@
   html{ scroll-behavior: smooth; }
   body{
     margin:0;
-    background: var(--bg);
     color: var(--ink);
     font-family: 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 16px;
@@ -35,12 +34,52 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* graph-paper base texture */
+  /* sky + drifting clouds, tiled down the whole page */
   body{
     background-image:
-      linear-gradient(var(--grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-    background-size: 28px 28px;
+      radial-gradient(70px 36px at 8% 24%,  rgba(255,255,255,0.95), rgba(255,255,255,0) 72%),
+      radial-gradient(100px 50px at 24% 14%, rgba(255,255,255,0.9),  rgba(255,255,255,0) 74%),
+      radial-gradient(60px 32px at 46% 34%, rgba(255,255,255,0.75), rgba(255,255,255,0) 72%),
+      radial-gradient(110px 55px at 68% 18%, rgba(255,255,255,0.9),  rgba(255,255,255,0) 74%),
+      radial-gradient(75px 38px at 88% 30%, rgba(255,255,255,0.8),  rgba(255,255,255,0) 72%),
+      radial-gradient(55px 28px at 96% 10%, rgba(255,255,255,0.7),  rgba(255,255,255,0) 70%),
+      linear-gradient(180deg, var(--bg-1), var(--bg-2));
+    background-repeat: repeat, repeat, repeat, repeat, repeat, repeat, no-repeat;
+    background-size: 100% 640px, 100% 640px, 100% 640px, 100% 640px, 100% 640px, 100% 640px, 100% 100%;
+    background-attachment: scroll, scroll, scroll, scroll, scroll, scroll, fixed;
+  }
+
+  .page{ position: relative; }
+  .scatter-layer{
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .deco{
+    position: absolute;
+    pointer-events: none;
+    animation: drift 7s ease-in-out infinite;
+  }
+  .deco.tooth{
+    width: 44px; height: 3px; border-radius: 2px;
+    background: linear-gradient(90deg, #EFE4C6, #EFE4C6 40%, #86BFAE 60%, #86BFAE);
+    opacity: 0.55;
+  }
+  .deco.stick{
+    width: 62px; height: 10px; border-radius: 5px;
+    background: linear-gradient(90deg, #EFE4C6, #9ED0C1);
+    box-shadow: inset 0 0 0 1px rgba(46,92,125,0.18);
+    opacity: 0.5;
+  }
+  .deco.bridge svg{ width: 100px; height: auto; opacity: 0.5; display:block; }
+  @keyframes drift{
+    0%, 100%{ transform: translateY(0) rotate(var(--r, 0deg)); }
+    50%{ transform: translateY(-9px) rotate(calc(var(--r, 0deg) + 4deg)); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .deco{ animation: none; }
   }
 
   a{ color: inherit; }
@@ -150,11 +189,13 @@
     fill: #E7E2D3;
     stroke: var(--line);
     stroke-width: 2;
-    animation: light 0.6s ease forwards 2.2s;
+    animation: chase 3.2s ease-in-out infinite;
+    animation-delay: calc(2.1s + (var(--i, 0) * 0.16s));
   }
   @keyframes draw{ to{ stroke-dashoffset: 0; } }
-  @keyframes light{
-    to{ fill: var(--accent-glow); filter: drop-shadow(0 0 6px var(--accent-glow)); }
+  @keyframes chase{
+    0%, 88%, 100%{ fill: #E7E2D3; filter: none; }
+    6%, 12%{ fill: var(--accent-glow); filter: drop-shadow(0 0 6px var(--accent-glow)); }
   }
   @media (prefers-reduced-motion: reduce){
     path.trace{ animation: none; stroke-dashoffset: 0; }
@@ -239,28 +280,8 @@
   .bom-group{ margin-bottom: 26px; }
   .bom-group:last-child{ margin-bottom: 0; }
 
-  /* ---------- projects: sky / cloud theme, side by side ---------- */
-  #projects{
-    --sky-1: #EAF5FC;
-    --sky-2: #CFE9F7;
-    --sky-ink: #16324A;
-    --sky-muted: #4C7089;
-    --sky-line: #2E5C7D;
-    --sky-line-faint: rgba(46,92,125,0.18);
-    background:
-      radial-gradient(60px 34px at 12% 22%, rgba(255,255,255,0.9), rgba(255,255,255,0) 70%),
-      radial-gradient(90px 46px at 22% 18%, rgba(255,255,255,0.85), rgba(255,255,255,0) 72%),
-      radial-gradient(70px 38px at 78% 12%, rgba(255,255,255,0.8), rgba(255,255,255,0) 70%),
-      radial-gradient(100px 50px at 88% 20%, rgba(255,255,255,0.75), rgba(255,255,255,0) 72%),
-      radial-gradient(80px 40px at 55% 8%, rgba(255,255,255,0.7), rgba(255,255,255,0) 72%),
-      linear-gradient(180deg, var(--sky-1), var(--sky-2));
-    background-color: var(--sky-2);
-    color: var(--sky-ink);
-  }
+  /* ---------- projects: side by side cards ---------- */
   #projects .section-inner{ grid-template-columns: 1fr; gap: 18px; }
-  #projects .sheet-tab{ color: var(--sky-muted); }
-  #projects .sheet-tab .num{ color: var(--sky-line); }
-  #projects h2{ color: var(--sky-ink); }
 
   .projects-grid{
     display: grid;
@@ -272,8 +293,8 @@
   }
 
   .project{
-    border: 1px solid var(--sky-line-faint);
-    background: rgba(255,255,255,0.65);
+    border: 1px solid var(--line-faint);
+    background: var(--bg-panel);
     backdrop-filter: blur(2px);
     padding: 20px clamp(14px,2vw,22px);
     display: flex;
@@ -283,19 +304,44 @@
     display:flex; flex-direction: column; gap: 6px;
     margin-bottom: 12px;
   }
-  .project-head h3{ font-size: 1rem; color: var(--sky-ink); }
+  .project-head h3{ font-size: 1rem; color: var(--ink); }
   .project-role{
     font-family:'IBM Plex Mono', monospace;
     font-size: 11px;
-    color: var(--sky-line);
+    color: var(--line);
     letter-spacing: 0.02em;
   }
   .project ul{
-    margin: 0; padding-left: 18px; color: var(--sky-muted);
+    margin: 0; padding-left: 18px; color: var(--muted);
   }
   .project li{ margin-bottom: 6px; font-size: 14px; }
-  .project li::marker{ color: var(--sky-line); }
+  .project li::marker{ color: var(--line); }
   .project li:last-child{ margin-bottom:0; }
+
+  .project-media{
+    margin-top: 14px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .project-media .media-label{
+    grid-column: 1 / -1;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    color: var(--muted);
+    letter-spacing: 0.03em;
+    margin-bottom: 2px;
+  }
+  .project-media video{
+    width: 100%;
+    display: block;
+    border-radius: 4px;
+    border: 1px solid var(--line-faint);
+    background: #0c1a26;
+  }
+  @media (max-width: 480px){
+    .project-media{ grid-template-columns: 1fr; }
+  }
 
   /* ---------- awards ---------- */
   .award{
@@ -312,6 +358,26 @@
     color: var(--muted);
   }
   .award .title{ font-weight: 500; }
+
+  .award-figure{
+    margin-top: 18px;
+    border: 1px solid var(--line-faint);
+    background: var(--bg-panel);
+    padding: 14px;
+    max-width: 340px;
+  }
+  .award-figure img{
+    width: 100%;
+    display: block;
+    border: 1px solid var(--line-faint);
+  }
+  .award-figure .cap{
+    display:flex; justify-content:space-between;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 10.5px; color: var(--muted);
+    margin-top: 8px;
+    letter-spacing: 0.03em;
+  }
 
   /* ---------- experience ---------- */
   .job{ margin-bottom: 26px; }
@@ -368,6 +434,8 @@
 </style>
 </head>
 <body>
+<div class="page">
+  <div class="scatter-layer" id="scatterLayer" aria-hidden="true"></div>
 
   <div class="toprail">
     <span><span class="dot"></span>EK / EE&nbsp;2030</span>
@@ -390,24 +458,13 @@
     </p>
 
     <div class="circuit-wrap">
-      <svg viewBox="0 0 640 160" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Animated line drawing of a simple LED circuit lighting up">
-        <path class="trace" d="M20,80 L120,80 L120,40 L260,40 L260,80 L340,80 M340,80 L340,40 L420,40 M420,80 L500,80 L500,40 L560,40" />
-        <!-- resistor zigzag -->
-        <path class="trace" d="M180,40 l8,-14 l14,28 l14,-28 l14,28 l14,-28 l8,14" style="animation-delay:0.15s;" />
-        <!-- switch -->
-        <circle class="node" cx="340" cy="80" r="4" />
-        <circle class="node" cx="420" cy="80" r="4" />
-        <path class="trace" d="M340,80 L400,55" style="animation-delay:0.3s; stroke-dasharray:70; stroke-dashoffset:70;" />
-        <!-- battery -->
-        <path class="trace" d="M20,80 L20,110 M60,60 L60,130" style="animation-delay:0.4s;" />
-        <path class="trace" d="M20,110 L20,80 M0,95 L20,95 M0,120 L20,120" style="animation-delay:0.4s;" />
-        <!-- LED bulb -->
-        <circle class="node" cx="590" cy="40" r="18" />
-        <circle class="led" cx="590" cy="40" r="10" />
-        <path class="trace" d="M560,40 L572,40" style="animation-delay:0.5s; stroke-dasharray:20; stroke-dashoffset:20;" />
+      <svg viewBox="0 0 640 140" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Animated line drawing of an LED array lighting up in a chase pattern">
+        <path class="trace" d="M20,90 L620,90" />
+        <path class="trace" d="M20,90 L20,50 M620,90 L620,50" style="animation-delay:0.1s;" />
+        <g id="ledRow"></g>
       </svg>
       <div class="cap">
-        <span>FIG. 1 — LED DRIVER, SWITCHED</span>
+        <span>FIG. 1 — LED ARRAY, CHASE PATTERN</span>
         <span>SCALE N.T.S.</span>
       </div>
     </div>
@@ -493,6 +550,12 @@
             <li>Soldered and wired the full circuit; implemented PWM for brightness control and dynamic lighting patterns.</li>
             <li>Wrote embedded software processing analog potentiometer input and digital button input to drive multiple LED outputs, debugging connections along the way.</li>
           </ul>
+          <div class="project-media">
+            <span class="media-label">BUILD CLIPS</span>
+            <video src="media/led-clip-1.mp4" controls muted playsinline preload="metadata"></video>
+            <video src="media/led-clip-2.mp4" controls muted playsinline preload="metadata"></video>
+            <video src="media/led-clip-3.mp4" controls muted playsinline preload="metadata"></video>
+          </div>
         </div>
 
         <div class="project">
@@ -540,6 +603,14 @@
         <div class="award">
           <span class="date">OCT 2025</span>
           <span class="title">Guinness World Record Holder — Tallest Toothpick Structure</span>
+        </div>
+
+        <div class="award-figure">
+          <img src="media/Bridge-structure.jpg" alt="3.9k Effciency Bridge I created" loading="lazy">
+          <div class="cap">
+            <span>FIG. 2 — RECORD STRUCTURE</span>
+            <span>GUINNESS, OCT 2025</span>
+          </div>
         </div>
       </div>
     </div>
@@ -617,6 +688,8 @@
     <div class="foot-note">Built for GitHub Pages. Edit the &lt;!-- EDIT ME --&gt; sections in index.html to update content.</div>
   </footer>
 
+</div><!-- /.page -->
+
 <script>
   // ---- EDIT ME: skills data -------------------------------------------
   const techSkills = [
@@ -637,6 +710,57 @@
   fillTable('tech-skills', techSkills);
   fillTable('sw-skills', swSkills);
   fillTable('tool-skills', toolSkills);
+
+  // ---- LED array (hero) -------------------------------------------------
+  const ledRow = document.getElementById('ledRow');
+  const ledCount = 12;
+  let ledSvg = '';
+  for(let i=0;i<ledCount;i++){
+    const x = 60 + i*50;
+    ledSvg += `<circle class="node" cx="${x}" cy="90" r="9"></circle>`;
+    ledSvg += `<circle class="led" cx="${x}" cy="90" r="4.5" style="--i:${i}"></circle>`;
+  }
+  ledRow.innerHTML = ledSvg;
+
+  // ---- EDIT ME: scattered toothpicks / popsicle sticks / bridges --------
+  // Decorative only — purely visual, tied to Eric's Guinness World Record
+  // toothpick-structure background. Safe to delete this whole block plus
+  // the #scatterLayer div in the HTML if you'd rather keep it plain.
+  const scatterLayer = document.getElementById('scatterLayer');
+  const bridgeSvg = `<svg viewBox="0 0 120 50" xmlns="http://www.w3.org/2000/svg">
+    <path d="M5,40 L115,40 M5,40 L5,15 M115,40 L115,15 M5,15 L60,5 L115,15 M5,40 L60,20 L115,40 M60,5 L60,20"
+      stroke="var(--line)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+
+  function rand(min, max){ return Math.random() * (max - min) + min; }
+
+  function scatterDecor(){
+    const pieces = [];
+    for(let i=0;i<16;i++) pieces.push({ type:'tooth' });
+    for(let i=0;i<9;i++)  pieces.push({ type:'stick' });
+    for(let i=0;i<4;i++)  pieces.push({ type:'bridge' });
+
+    const frag = document.createDocumentFragment();
+    pieces.forEach(p => {
+      const el = document.createElement('div');
+      el.className = `deco ${p.type}`;
+      const top = rand(4, 96);
+      const left = rand(2, 92);
+      const rot = rand(-35, 35);
+      const dur = rand(5, 9);
+      const delay = rand(0, 5);
+      el.style.top = top + '%';
+      el.style.left = left + '%';
+      el.style.setProperty('--r', rot + 'deg');
+      el.style.animationDuration = dur + 's';
+      el.style.animationDelay = delay + 's';
+      if(p.type === 'bridge') el.innerHTML = bridgeSvg;
+      frag.appendChild(el);
+    });
+    scatterLayer.innerHTML = '';
+    scatterLayer.appendChild(frag);
+  }
+  scatterDecor();
 
   // ---- EDIT ME: links ----------------------------------------------------
   // Update these to your real profiles / resume file before publishing.
