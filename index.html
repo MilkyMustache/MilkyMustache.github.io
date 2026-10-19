@@ -438,7 +438,7 @@
   @media (max-width: 860px){ .records-grid{ grid-template-columns: 1fr; } .stamp{ display:none; } }
   .record{ position: relative; overflow: hidden; padding: clamp(24px, 3.5vw, 36px); min-height: 380px; display:flex; flex-direction: column; }
   .record .art{ position: absolute; right: -6px; bottom: 0; height: 92%; width: auto; color: var(--line); opacity: .16; pointer-events: none; }
-  .record > *:not(.art){ position: relative; }
+  .record > *:not(.art):not(.photo-hint):not(.rec-photo){ position: relative; }
   .rec-badge{
     align-self: flex-start;
     font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: .06em;
@@ -465,6 +465,38 @@
   }
   .rec-links a:hover{ color: var(--accent); gap: 12px; }
   .rec-links a .src{ font-family: var(--mono); font-size: 11px; font-weight: 400; color: var(--muted); }
+
+  /* hover (or tap) the toothpick card to reveal the full tower photo */
+  .record.has-photo{ cursor: zoom-in; }
+  .photo-hint{
+    position: absolute; right: 22px; bottom: 22px;
+    font-family: var(--hand); font-size: 21px; color: var(--accent);
+    transform: rotate(-4deg);
+    transition: opacity .3s;
+  }
+  .rec-photo{
+    position: absolute !important; inset: 0; margin: 0; z-index: 3;
+    border-radius: inherit; overflow: hidden;
+    background: var(--navy);
+    opacity: 0; transform: scale(1.04);
+    transition: opacity .45s ease, transform .6s ease;
+    pointer-events: none;
+  }
+  .rec-photo img{ width: 100%; height: 100%; object-fit: cover; object-position: 50% 55%; display: block; }
+  .rec-photo figcaption{
+    position: absolute; left: 0; right: 0; bottom: 0;
+    display:flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap;
+    padding: 40px 22px 18px;
+    background: linear-gradient(transparent, rgba(14,34,54,0.85));
+    color: #fff;
+  }
+  .rec-photo figcaption b{ font-family: var(--serif); font-weight: 300; font-size: 2.4rem; line-height: 1; letter-spacing: -0.03em; }
+  .rec-photo figcaption span{ font-family: var(--mono); font-size: 11px; letter-spacing: .06em; opacity: .85; }
+  .record.has-photo:hover .rec-photo,
+  .record.has-photo:focus-visible .rec-photo,
+  .record.has-photo.show .rec-photo{ opacity: 1; transform: none; }
+  .record.has-photo:hover .photo-hint, .record.has-photo.show .photo-hint{ opacity: 0; }
+  @media (hover: none){ .photo-hint{ font-size: 0; } .photo-hint::after{ content: "tap to see the tower ↗"; font-size: 20px; } }
 
   /* ---------- awards ---------- */
   .awards-layout{ display:grid; grid-template-columns: 1fr auto; gap: 32px; align-items: start; }
@@ -856,16 +888,26 @@
             </div>
           </article>
 
-          <article class="card record reveal">
+          <article class="card record has-photo reveal" tabindex="0" aria-label="Tallest Toothpick Structure, hover or tap to see the tower">
             <svg class="art" data-tower="toothpick" viewBox="0 0 120 400" aria-hidden="true"></svg>
             <span class="rec-badge current">CURRENT RECORD HOLDER · OCT 2025</span>
-            <div class="rec-big">2025</div>
+            <div class="rec-big">17.32<small>ft</small></div>
             <h3 class="rec-title">Tallest Toothpick Structure</h3>
-            <p class="rec-text">Five years after the popsicle stick tower, I set a second Guinness World Record, this time building with toothpicks.</p>
+            <p class="rec-text">Five years after the popsicle stick tower, I built an Eiffel Tower out of more than 20,000 toothpicks and 400 glue sticks. A professional land surveyor measured it at 17.32 feet.</p>
             <div class="rec-facts">
-              <span class="tag">Toothpicks</span>
-              <span class="tag">Guinness World Records</span>
+              <span class="tag">20,000+ toothpicks</span>
+              <span class="tag">400 glue sticks</span>
+              <span class="tag">Eiffel Tower design</span>
             </div>
+            <div class="rec-links">
+              <a href="https://www.youtube.com/watch?v=YrUmjujMscE" target="_blank" rel="noopener">Watch the video <span class="src">YOUTUBE ↗</span></a>
+              <a href="https://www.nctv17.org/news/naperville-teen-sets-world-record-for-tallest-toothpick-tower/" target="_blank" rel="noopener">In the news <span class="src">NCTV17 ↗</span></a>
+            </div>
+            <span class="photo-hint">hover to see the tower ↗</span>
+            <figure class="rec-photo" aria-hidden="true">
+              <img src="media/toothpick-tower.webp" alt="" loading="lazy">
+              <figcaption><b>17.32 ft</b><span>TOOTHPICK EIFFEL TOWER · OCT 2025</span></figcaption>
+            </figure>
           </article>
         </div>
       </div>
@@ -890,7 +932,7 @@
             </div>
             <div class="award reveal">
               <span class="date">OCT 2025</span>
-              <span class="title">Guinness World Record Holder <em>— Tallest Toothpick Structure</em></span>
+              <span class="title">Guinness World Record Holder <em>— Tallest Toothpick Structure (17.32 ft)</em></span>
             </div>
             <div class="award reveal">
               <span class="date">NOV 2020</span>
@@ -1038,6 +1080,14 @@
     }
     svg.innerHTML = `<path d="${d}" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
   });
+  // touch screens can't hover: tap the toothpick card to toggle the photo
+  document.querySelectorAll('.record.has-photo').forEach(card => {
+    card.addEventListener('click', e => {
+      if(e.target.closest('a')) return;
+      if(!matchMedia('(hover: hover)').matches) card.classList.toggle('show');
+    });
+  });
+
   const holes = document.getElementById('bbHoles');
   if(holes){
     let h = '';
