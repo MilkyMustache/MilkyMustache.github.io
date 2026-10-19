@@ -619,7 +619,7 @@
               <ul>
                 <li>Designed and built an interactive 30+ LED array driven by an Arduino, written in C++.</li>
                 <li>Soldered and wired the full circuit; implemented PWM for brightness control and dynamic lighting patterns.</li>
-                <li>Wrote embedded software processing analog potentiometer input and digital button input to drive multiple LED outputs, debugging connections along the way.</li>
+                <li>Wrote embedded software processing analog potentiometer input and digital button input to drive multiple LED outputs, debugging electrical connections and optimizing the system for reliable operation.</li>
               </ul>
             </div>
             <div class="slide-media">
@@ -634,8 +634,9 @@
               <div class="s-meta"><span class="s-num">P—03</span><span class="s-role">DUAL CREDIT ELECTRONICS PROJECT</span></div>
               <h3>Digital Birthday Display Circuit</h3>
               <ul>
-                <li>Designed a sequential digital circuit that displays a pre-stored date across six seven-segment displays on a button press.</li>
-                <li>Implemented shift registers, D and JK flip-flops, and AND/OR gate logic to store and transition between circuit states, then wired, tested, and debugged the hardware.</li>
+                <li>Designed a sequential digital circuit that displays a pre-stored birth date across six seven-segment displays: one button press steps the display from zero up to the stored date.</li>
+                <li>Implemented shift registers, D and JK flip-flops, AND/OR gates, and seven-segment display logic to store and transition between circuit states.</li>
+                <li>Developed the combinational and sequential logic for state control, then wired, tested, and debugged the hardware to achieve the required display sequence.</li>
               </ul>
             </div>
           </div>
@@ -705,6 +706,7 @@
           <span></span>
           <ul>
             <li>Taught robotics fundamentals and introductory programming (JavaScript and block code) to students aged 5–12, including students with special needs.</li>
+            <li>Fostered engagement and skill development in STEM by making hands-on robotics approachable for young students.</li>
           </ul>
         </div>
       </div>
@@ -718,6 +720,7 @@
       <h2 class="contact-big reveal">Let's build<br><em>something.</em></h2>
       <p class="contact-sub reveal">Open to research, internships, and project teams in circuits, embedded systems, and robotics. Based in Naperville, Illinois.</p>
       <div class="contact-links reveal">
+        <a href="mailto:eklabel2@illinois.edu"><span>eklabel2@illinois.edu</span><span class="lbl">SCHOOL EMAIL ↗</span></a>
         <a href="mailto:eklabel4321@gmail.com"><span>eklabel4321@gmail.com</span><span class="lbl">EMAIL ↗</span></a>
         <a href="https://www.linkedin.com/in/eric-klabel-440b63257/" target="_blank" rel="noopener"><span>Eric Klabel</span><span class="lbl">LINKEDIN ↗</span></a>
         <a href="https://github.com/MilkyMustache" target="_blank" rel="noopener"><span>MilkyMustache</span><span class="lbl">GITHUB ↗</span></a>
@@ -733,13 +736,13 @@
 <script>
   // ---- EDIT ME: skills data -------------------------------------------
   const techSkills = [
-    "Circuit Design","Soldering","3D Printing","Electrical Troubleshooting",
+    "Circuit Design","Soldering","Electrical Component Knowledge","3D Printing","Electrical Troubleshooting",
     "Arduino","Breadboard Design","FPGA","Motor Drivers","Encoders","IMUs",
     "Cameras","Servo Systems","Sensor Integration","Gates","Registers",
     "Flip-Flops","Transistor Circuits"
   ];
   const swSkills = ["Java","Python","C++"];
-  const toolSkills = ["Multisim","Falstad","Fusion 360","Onshape","Oscilloscope","Multimeter","Serial Plotter"];
+  const toolSkills = ["KiCad","Multisim","Falstad","Fusion 360","Onshape","Oscilloscope","Multimeter","Serial Plotter"];
 
   function fillList(id, items){
     document.getElementById(id).innerHTML = items.map(item => `<li>${item}</li>`).join('');
