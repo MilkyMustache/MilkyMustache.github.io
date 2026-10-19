@@ -539,6 +539,20 @@
   .exp-item li{ margin-bottom: 6px; }
   .exp-item li:last-child{ margin-bottom: 0; }
   .exp-item li::marker{ color: var(--accent); }
+  /* several roles at one org: dots joined by a line, like LinkedIn */
+  .exp-roles{ list-style: none; margin: 14px 0 0; padding: 0; }
+  .exp-roles li{ position: relative; padding: 0 0 16px 26px; margin: 0; }
+  .exp-roles li:last-child{ padding-bottom: 0; }
+  .exp-roles li::before{
+    content:""; position: absolute; left: 3px; top: 8px;
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--accent); box-shadow: 0 0 6px rgba(232,137,43,0.6);
+  }
+  .exp-roles li:not(:last-child)::after{
+    content:""; position: absolute; left: 7px; top: 22px; bottom: 2px; width: 2px;
+    background: var(--line-faint); border-radius: 2px;
+  }
+  .exp-roles h4{ margin: 0; font-size: 16px; font-weight: 600; line-height: 1.35; }
   .exp-skills{ margin-top: 10px; font-size: 14px; color: var(--ink); }
   .exp-skills b{ font-weight: 600; }
   @media (max-width: 520px){ .exp-item{ grid-template-columns: 44px 1fr; gap: 14px; } .exp-logo{ width: 44px; height: 44px; font-size: 13px; } }
@@ -867,26 +881,84 @@
              data-start / data-end are YYYY-MM; leave data-end empty for "Present". -->
         <div class="card exp-list reveal">
           <article class="exp-item">
-            <span class="exp-logo" style="--logo:#15304A">HS</span>
+            <span class="exp-logo" style="--logo:#6B2C91">PW</span>
             <div class="exp-body">
-              <h3 class="exp-title">Executive Board President</h3>
-              <p class="exp-org">High School Robotics Club</p>
-              <p class="exp-dates" data-start="2018-10" data-end="2026-05"></p>
+              <h3 class="exp-title">Assistant STEM Instructor</h3>
+              <p class="exp-org">Play-Well TEKnologies · Seasonal</p>
+              <p class="exp-dates" data-start="2026-06" data-end="2026-08"></p>
+              <p class="exp-loc">On-site</p>
               <ul>
-                <li>Led team operations, strategy, and member coordination as Executive Board President.</li>
-                <li>Served as lead designer and builder for a competitive VEX Robotics Competition team, overseeing development from concept through competition.</li>
+                <li>Assisted in several week-long STEM summer camps where children ages 3–12 used DUPLO and LEGO to build engineering projects, including basic mechanical systems such as gears and motors.</li>
+                <li>Fostered enthusiasm and a love for engineering by showcasing real-world engineering concepts and applications to young children.</li>
+                <li>Supervised and guided groups of 10–20 children, ensuring a safe, engaging, and productive learning environment.</li>
               </ul>
             </div>
           </article>
+
           <article class="exp-item">
-            <span class="exp-logo" style="--logo:#E8892B">KS</span>
+            <span class="exp-logo" style="--logo:#F57E25">FTC</span>
+            <div class="exp-body">
+              <h3 class="exp-title">Builder</h3>
+              <p class="exp-org">FIRST Tech Challenge</p>
+              <p class="exp-dates" data-start="2024-12" data-end="2026-05"></p>
+              <p class="exp-loc">Naperville, Illinois, United States · On-site</p>
+            </div>
+          </article>
+
+          <!-- one organization, several roles (LinkedIn's grouped layout) -->
+          <article class="exp-item">
+            <span class="exp-logo" style="--logo:#C8102E">VEX</span>
+            <div class="exp-body">
+              <h3 class="exp-title">VEX Robotics</h3>
+              <p class="exp-dates" data-start="2018-10" data-end="2026-03" data-only-duration></p>
+              <p class="exp-loc">Naperville, Illinois, United States · On-site</p>
+              <ol class="exp-roles">
+                <li>
+                  <h4>Executive Board President</h4>
+                  <p class="exp-dates" data-start="2025-09" data-end="2026-03"></p>
+                </li>
+                <li>
+                  <h4>Programmer</h4>
+                  <p class="exp-dates" data-start="2025-08" data-end="2026-03"></p>
+                </li>
+                <li>
+                  <h4>Lead Builder</h4>
+                  <p class="exp-dates" data-start="2018-10" data-end="2026-03"></p>
+                </li>
+                <li>
+                  <h4>Lead Designer</h4>
+                  <p class="exp-dates" data-start="2018-10" data-end="2026-03"></p>
+                </li>
+              </ol>
+            </div>
+          </article>
+
+          <article class="exp-item">
+            <span class="exp-logo" style="--logo:#1FA39A">KS</span>
             <div class="exp-body">
               <h3 class="exp-title">Robotics Instructor</h3>
-              <p class="exp-org">Kids STEM Studio LLC</p>
+              <p class="exp-org">Kids STEM Studio</p>
               <p class="exp-dates" data-start="2024-09" data-end="2025-03"></p>
+              <p class="exp-loc">Naperville, Illinois, United States</p>
               <ul>
-                <li>Taught robotics fundamentals and introductory programming (JavaScript and block code) to students aged 5–12, including students with special needs.</li>
-                <li>Fostered engagement and skill development in STEM by making hands-on robotics approachable for young students.</li>
+                <li>Instructor for children from 5–14 years old.</li>
+                <li>Facilitating lessons in coding, app development, robotics, and hands-on engineering projects.</li>
+                <li>Keeping students on task and engaged throughout all camp lessons and activities.</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="exp-item">
+            <span class="exp-logo" style="--logo:#E31837">M</span>
+            <div class="exp-body">
+              <h3 class="exp-title">Math Instructor</h3>
+              <p class="exp-org">Mathnasium Learning Centers · Part-time</p>
+              <p class="exp-dates" data-start="2024-12" data-end="2025-02"></p>
+              <p class="exp-loc">Naperville, Illinois, United States · On-site</p>
+              <ul>
+                <li>Taught foundational math concepts and arithmetic to students ranging from kindergarten through early high school.</li>
+                <li>Adapted instructional methods to match individual learning styles and skill levels.</li>
+                <li>Reinforced problem-solving skills and mathematical confidence through one-on-one and small-group instruction.</li>
               </ul>
             </div>
           </article>
@@ -1132,7 +1204,9 @@
     const months = (ey - sy) * 12 + (em - sm) + 1;   // LinkedIn counts both ends
     const y = Math.floor(months / 12), m = months % 12;
     const dur = [y ? y + (y > 1 ? ' yrs' : ' yr') : '', m ? m + (m > 1 ? ' mos' : ' mo') : ''].filter(Boolean).join(' ');
-    el.innerHTML = `${fmt(el.dataset.start)} – ${end ? fmt(end) : 'Present'} <span class="dur">· ${dur}</span>`;
+    el.innerHTML = el.hasAttribute('data-only-duration')
+      ? dur   // org header on a grouped entry shows just the total
+      : `${fmt(el.dataset.start)} – ${end ? fmt(end) : 'Present'} <span class="dur">· ${dur}</span>`;
   });
 
   // touch screens can't hover: tap the toothpick card to toggle the photo
