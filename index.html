@@ -483,6 +483,9 @@
     pointer-events: none;
   }
   .rec-photo img{ width: 100%; height: 100%; object-fit: cover; object-position: 50% 55%; display: block; }
+  /* tall photos: show the whole image over a blurred copy of itself */
+  .rec-photo.contain img{ position: absolute; inset: 0; object-fit: contain; object-position: center; }
+  .rec-photo.contain img.backdrop{ object-fit: cover; filter: blur(22px) brightness(.75) saturate(1.2); transform: scale(1.15); }
   .rec-photo figcaption{
     position: absolute; left: 0; right: 0; bottom: 0;
     display:flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap;
@@ -512,6 +515,33 @@
   @media (max-width: 520px){ .award{ grid-template-columns: 1fr; } }
   .award-figure{ margin: 0; max-width: 300px; padding: 10px 10px 4px; background: #FFFDF6; border: 1px solid var(--line); transform: rotate(2deg); box-shadow: 6px 6px 0 rgba(46,92,125,0.18); }
   .award-figure img{ width: 100%; display:block; }
+
+  /* ---------- experience, LinkedIn-style list ---------- */
+  .exp-list{ padding: 6px clamp(18px, 3vw, 30px); }
+  .exp-item{
+    display:grid; grid-template-columns: 56px 1fr; gap: 18px;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--line-faint);
+  }
+  .exp-item:last-child{ border-bottom: none; }
+  .exp-logo{
+    width: 56px; height: 56px; border-radius: 10px;
+    display:grid; place-items:center;
+    background: var(--logo, var(--ink)); color: #fff;
+    font-family: var(--mono); font-weight: 600; font-size: 16px; letter-spacing: .02em;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15);
+  }
+  .exp-title{ font-family: var(--sans); font-size: 18px; font-weight: 600; line-height: 1.3; }
+  .exp-org{ font-size: 15px; color: var(--ink); margin-top: 1px; }
+  .exp-dates, .exp-loc{ font-size: 14px; color: var(--muted); }
+  .exp-dates .dur{ color: var(--muted); }
+  .exp-item ul{ margin: 10px 0 0; padding-left: 18px; color: var(--muted); }
+  .exp-item li{ margin-bottom: 6px; }
+  .exp-item li:last-child{ margin-bottom: 0; }
+  .exp-item li::marker{ color: var(--accent); }
+  .exp-skills{ margin-top: 10px; font-size: 14px; color: var(--ink); }
+  .exp-skills b{ font-weight: 600; }
+  @media (max-width: 520px){ .exp-item{ grid-template-columns: 44px 1fr; gap: 14px; } .exp-logo{ width: 44px; height: 44px; font-size: 13px; } }
 
   /* ---------- experience timeline ---------- */
   .timeline{ position: relative; padding-left: 30px; }
@@ -595,9 +625,9 @@
         <a href="#education" class="hide-sm">Education</a>
         <a href="#skills" class="hide-sm">Skills</a>
         <a href="#projects">Projects</a>
-        <a href="#circuits" class="hide-sm">Circuits</a>
-        <a href="#records">Records</a>
         <a href="#experience" class="hide-sm">Experience</a>
+        <a href="#records">Records</a>
+        <a href="#circuits" class="hide-sm">Circuits</a>
         <a href="#contact" class="cta">Contact</a>
       </nav>
     </div>
@@ -826,37 +856,43 @@
       </div>
     </section>
 
-    <!-- ================= CIRCUITS (bench) ================= -->
-    <section id="circuits">
+    <!-- ================= EXPERIENCE ================= -->
+    <section id="experience">
       <div class="wrap">
         <div class="sec-head reveal">
-          <div><span class="kicker"><span class="num">04</span> / Sheet</span><h2>Circuits</h2></div>
-          <span class="idx">on the bench</span>
+          <div><span class="kicker"><span class="num">04</span> / Sheet</span><h2>Experience</h2></div>
+          <span class="idx">where I've worked</span>
         </div>
-        <div class="card bench reveal">
-          <svg viewBox="0 0 220 150" aria-hidden="true">
-            <rect x="4" y="4" width="212" height="142" rx="10" fill="#fff" stroke="#2E5C7D" stroke-width="2"/>
-            <rect x="4" y="68" width="212" height="14" fill="#EAF5FC"/>
-            <g fill="#BFD3E2" id="bbHoles"></g>
-            <line x1="14" y1="16" x2="206" y2="16" stroke="#E4572E" stroke-width="2"/>
-            <line x1="14" y1="134" x2="206" y2="134" stroke="#3A86FF" stroke-width="2"/>
-            <circle cx="110" cy="75" r="7" fill="none" stroke="#E8892B" stroke-width="2" stroke-dasharray="3 3"/>
-          </svg>
-          <div>
-            <span class="status-pill">0 CIRCUITS · FIRST BUILD COMING SOON</span>
-            <h3>The bench is clear, for now.</h3>
-            <p>This is where I'll post the circuits I'm working on next: schematics, breadboard photos, scope captures, and what I learned along the way.</p>
-          </div>
-        </div>
-        <!-- EDIT ME: replace an empty slot with a real circuit card when you have one -->
-        <div class="slots reveal">
-          <div class="slot"><span>BENCH SLOT 01</span><b>empty</b></div>
-          <div class="slot"><span>BENCH SLOT 02</span><b>empty</b></div>
-          <div class="slot"><span>BENCH SLOT 03</span><b>empty</b></div>
+        <!-- LinkedIn-style list. Add a job by copying one .exp-item.
+             data-start / data-end are YYYY-MM; leave data-end empty for "Present". -->
+        <div class="card exp-list reveal">
+          <article class="exp-item">
+            <span class="exp-logo" style="--logo:#15304A">HS</span>
+            <div class="exp-body">
+              <h3 class="exp-title">Executive Board President</h3>
+              <p class="exp-org">High School Robotics Club</p>
+              <p class="exp-dates" data-start="2018-10" data-end="2026-05"></p>
+              <ul>
+                <li>Led team operations, strategy, and member coordination as Executive Board President.</li>
+                <li>Served as lead designer and builder for a competitive VEX Robotics Competition team, overseeing development from concept through competition.</li>
+              </ul>
+            </div>
+          </article>
+          <article class="exp-item">
+            <span class="exp-logo" style="--logo:#E8892B">KS</span>
+            <div class="exp-body">
+              <h3 class="exp-title">Robotics Instructor</h3>
+              <p class="exp-org">Kids STEM Studio LLC</p>
+              <p class="exp-dates" data-start="2024-09" data-end="2025-03"></p>
+              <ul>
+                <li>Taught robotics fundamentals and introductory programming (JavaScript and block code) to students aged 5–12, including students with special needs.</li>
+                <li>Fostered engagement and skill development in STEM by making hands-on robotics approachable for young students.</li>
+              </ul>
+            </div>
+          </article>
         </div>
       </div>
     </section>
-
     <!-- ================= WORLD RECORDS ================= -->
     <section id="records">
       <div class="wrap">
@@ -871,7 +907,7 @@
         </div>
 
         <div class="records-grid">
-          <article class="card record reveal">
+          <article class="card record has-photo reveal" tabindex="0" aria-label="Tallest Popsicle Stick Structure, hover or tap to see the tower">
             <svg class="art" data-tower="popsicle" viewBox="0 0 120 400" aria-hidden="true"></svg>
             <span class="rec-badge">PREVIOUS RECORD HOLDER · NOV 2020</span>
             <div class="rec-big">20.20<small>ft</small></div>
@@ -886,6 +922,12 @@
               <a href="https://www.guinnessworldrecords.com/news/2021/5/12-year-old-boy-constructs-the-worlds-tallest-popsicle-stick-structure-659984" target="_blank" rel="noopener">Read the story <span class="src">GUINNESS WORLD RECORDS ↗</span></a>
               <a href="https://patch.com/illinois/naperville/naperville-teens-popsicle-stick-hobby-becomes-world-record%C2%A0" target="_blank" rel="noopener">In the news <span class="src">NAPERVILLE PATCH ↗</span></a>
             </div>
+            <span class="photo-hint">hover to see the tower ↗</span>
+            <figure class="rec-photo contain" aria-hidden="true">
+              <img class="backdrop" src="media/popsicle-tower.png" alt="" loading="lazy">
+              <img src="media/popsicle-tower.png" alt="" loading="lazy">
+              <figcaption><b>20.20 ft</b><span>POPSICLE STICK TOWER · NOV 2020</span></figcaption>
+            </figure>
           </article>
 
           <article class="card record has-photo reveal" tabindex="0" aria-label="Tallest Toothpick Structure, hover or tap to see the tower">
@@ -949,37 +991,37 @@
       </div>
     </section>
 
-    <!-- ================= EXPERIENCE ================= -->
-    <section id="experience">
+    <!-- ================= CIRCUITS (bench) ================= -->
+    <section id="circuits">
       <div class="wrap">
         <div class="sec-head reveal">
-          <div><span class="kicker"><span class="num">07</span> / Sheet</span><h2>Experience</h2></div>
-          <span class="idx">timeline</span>
+          <div><span class="kicker"><span class="num">07</span> / Sheet</span><h2>Circuits</h2></div>
+          <span class="idx">on the bench</span>
         </div>
-        <div class="timeline">
-          <div class="card job reveal">
-            <div class="job-head">
-              <span class="org">High School Robotics Club<span class="pos">Executive Board President</span></span>
-              <span class="date-pill">OCT 2018 – MAY 2026</span>
-            </div>
-            <ul>
-              <li>Led team operations, strategy, and member coordination as Executive Board President.</li>
-              <li>Served as lead designer and builder for a competitive VEX Robotics Competition team, overseeing development from concept through competition.</li>
-            </ul>
+        <div class="card bench reveal">
+          <svg viewBox="0 0 220 150" aria-hidden="true">
+            <rect x="4" y="4" width="212" height="142" rx="10" fill="#fff" stroke="#2E5C7D" stroke-width="2"/>
+            <rect x="4" y="68" width="212" height="14" fill="#EAF5FC"/>
+            <g fill="#BFD3E2" id="bbHoles"></g>
+            <line x1="14" y1="16" x2="206" y2="16" stroke="#E4572E" stroke-width="2"/>
+            <line x1="14" y1="134" x2="206" y2="134" stroke="#3A86FF" stroke-width="2"/>
+            <circle cx="110" cy="75" r="7" fill="none" stroke="#E8892B" stroke-width="2" stroke-dasharray="3 3"/>
+          </svg>
+          <div>
+            <span class="status-pill">0 CIRCUITS · FIRST BUILD COMING SOON</span>
+            <h3>The bench is clear, for now.</h3>
+            <p>This is where I'll post the circuits I'm working on next: schematics, breadboard photos, scope captures, and what I learned along the way.</p>
           </div>
-          <div class="card job reveal">
-            <div class="job-head">
-              <span class="org">Kids STEM Studio LLC<span class="pos">Robotics Instructor</span></span>
-              <span class="date-pill">SEP 2024 – MAR 2025</span>
-            </div>
-            <ul>
-              <li>Taught robotics fundamentals and introductory programming (JavaScript and block code) to students aged 5–12, including students with special needs.</li>
-              <li>Fostered engagement and skill development in STEM by making hands-on robotics approachable for young students.</li>
-            </ul>
-          </div>
+        </div>
+        <!-- EDIT ME: replace an empty slot with a real circuit card when you have one -->
+        <div class="slots reveal">
+          <div class="slot"><span>BENCH SLOT 01</span><b>empty</b></div>
+          <div class="slot"><span>BENCH SLOT 02</span><b>empty</b></div>
+          <div class="slot"><span>BENCH SLOT 03</span><b>empty</b></div>
         </div>
       </div>
     </section>
+
   </main>
 
   <!-- ================= CONTACT ================= -->
@@ -1080,6 +1122,19 @@
     }
     svg.innerHTML = `<path d="${d}" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
   });
+  // ---- experience dates: "Sep 2024 – Mar 2025 · 7 mos", like LinkedIn ----
+  document.querySelectorAll('.exp-dates[data-start]').forEach(el => {
+    const fmt = ym => new Date(ym + '-15').toLocaleString('en-US', { month: 'short', year: 'numeric' });
+    const [sy, sm] = el.dataset.start.split('-').map(Number);
+    const end = el.dataset.end;
+    const now = new Date();
+    const [ey, em] = end ? end.split('-').map(Number) : [now.getFullYear(), now.getMonth() + 1];
+    const months = (ey - sy) * 12 + (em - sm) + 1;   // LinkedIn counts both ends
+    const y = Math.floor(months / 12), m = months % 12;
+    const dur = [y ? y + (y > 1 ? ' yrs' : ' yr') : '', m ? m + (m > 1 ? ' mos' : ' mo') : ''].filter(Boolean).join(' ');
+    el.innerHTML = `${fmt(el.dataset.start)} – ${end ? fmt(end) : 'Present'} <span class="dur">· ${dur}</span>`;
+  });
+
   // touch screens can't hover: tap the toothpick card to toggle the photo
   document.querySelectorAll('.record.has-photo').forEach(card => {
     card.addEventListener('click', e => {
