@@ -333,6 +333,56 @@
     max-height: 320px;
   }
 
+  /* ---------- featured project (in progress) ---------- */
+  .project.featured{ grid-column: 1 / -1; padding: 0; overflow: hidden; }
+  .featured-inner{ display:grid; grid-template-columns: 1fr 1.1fr; }
+  .featured-text{ padding: 26px clamp(18px,3vw,30px); }
+  .featured-top{ display:flex; align-items:center; gap: 10px; flex-wrap: wrap; }
+  .status{
+    display:inline-flex; align-items:center; gap: 7px;
+    font-family:'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600;
+    letter-spacing: 0.05em;
+    color: #9A5A0C; background: var(--accent-soft);
+    padding: 3px 10px; border-radius: 999px;
+  }
+  .status::before{
+    content:""; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{ opacity: 1; } 50%{ opacity: .3; } }
+  .project.featured .project-head h3{ font-size: 1.35rem; }
+  .subsystems{ margin-top: 18px; }
+  .subsystems .tag-label{ display:block; margin-bottom: 8px; }
+  .subsystems .chips{ margin-top: 0; }
+  .subsystems .chip{ font-size: 12.5px; padding: 4px 10px; }
+
+  .schematic{
+    margin: 0;
+    background: #000;
+    display:flex; flex-direction: column;
+    border-left: 1px solid var(--line-faint);
+  }
+  .schematic a{ display:block; flex: 1; position: relative; cursor: zoom-in; }
+  .schematic img{ width: 100%; height: 100%; object-fit: contain; display:block; }
+  .schematic .zoom-hint{
+    position:absolute; right: 10px; top: 10px;
+    font-family:'IBM Plex Mono', monospace; font-size: 10.5px;
+    color: #fff; background: rgba(255,255,255,0.14);
+    padding: 3px 8px; border-radius: 6px;
+    opacity: 0; transition: opacity .15s;
+  }
+  .schematic a:hover .zoom-hint{ opacity: 1; }
+  .schematic .cap{
+    margin: 0; padding: 10px 14px;
+    color: rgba(255,255,255,0.6);
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  @media (max-width: 860px){
+    .featured-inner{ grid-template-columns: 1fr; }
+    .schematic{ border-left: none; border-top: 1px solid var(--line-faint); }
+  }
+
   /* ---------- awards ---------- */
   .awards-layout{ display:grid; grid-template-columns: 1fr auto; gap: 24px; align-items: start; }
   @media (max-width: 760px){ .awards-layout{ grid-template-columns: 1fr; } }
@@ -559,6 +609,49 @@
       </div>
 
       <div class="projects-grid">
+        <article class="card project featured reveal">
+          <div class="featured-inner">
+            <div class="featured-text">
+              <div class="featured-top">
+                <span class="project-num">P—00</span>
+                <span class="status">IN PROGRESS</span>
+              </div>
+              <div class="project-head">
+                <h3>Flappy Bird, Built from Discrete Electrical Components</h3>
+                <span class="project-role">NO MICROCONTROLLER · NO SOFTWARE</span>
+              </div>
+              <ul>
+                <li>Engineered position-tracking logic for the bird and pipes using several cascaded 4-bit binary counters to represent x/y coordinates, replacing what would typically be software-based coordinate tracking.</li>
+                <li>Designed game logic, including scoring and collision detection, using logic gates, clock circuits, operational amplifiers, and 4-to-16 line decoders, with several feedback loops to simulate gravity and flying physics.</li>
+                <li>Developing the full circuit in KiCad, integrating discrete logic with an 8x8 LED matrix as the display for the video game.</li>
+              </ul>
+              <div class="subsystems">
+                <span class="tag-label">IN THE CURRENT SCHEMATIC</span>
+                <div class="chips">
+                  <span class="chip">555 timers (pipe x/y clocks)</span>
+                  <span class="chip">Binary counters</span>
+                  <span class="chip">4-bit adder</span>
+                  <span class="chip">Pipe-gap encoder</span>
+                  <span class="chip">Pipe / bird multiplexer</span>
+                  <span class="chip">3-to-8 decoders</span>
+                  <span class="chip">8x8 LED matrix</span>
+                  <span class="chip">7-segment score</span>
+                </div>
+              </div>
+            </div>
+            <figure class="schematic">
+              <a href="media/flappy-bird-schematic.png" target="_blank" rel="noopener">
+                <img src="media/flappy-bird-schematic.png" alt="Work-in-progress schematic of the Flappy Bird circuit: 555 timer clocks, binary counters, adder, decoders, multiplexers, and an 8x8 LED matrix" loading="lazy">
+                <span class="zoom-hint">OPEN FULL SIZE ↗</span>
+              </a>
+              <figcaption class="cap">
+                <span>FIG. 3 — CURRENT SCHEMATIC</span>
+                <span>WORK IN PROGRESS</span>
+              </figcaption>
+            </figure>
+          </div>
+        </article>
+
         <article class="card project reveal">
           <span class="project-num">P—01</span>
           <div class="project-head">
