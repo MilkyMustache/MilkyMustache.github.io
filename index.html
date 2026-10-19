@@ -38,41 +38,20 @@
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     background-color: var(--bg-1);
-    /* sky + soft clouds, with a faint blueprint grid */
-    background-image:
-      radial-gradient(110px 55px at 12% 18%, rgba(255,255,255,0.85), rgba(255,255,255,0) 74%),
-      radial-gradient(90px 45px at 78% 12%, rgba(255,255,255,0.8), rgba(255,255,255,0) 74%),
-      radial-gradient(80px 40px at 55% 38%, rgba(255,255,255,0.6), rgba(255,255,255,0) 72%),
-      linear-gradient(rgba(46,92,125,0.045) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(46,92,125,0.045) 1px, transparent 1px),
-      linear-gradient(180deg, var(--bg-1), var(--bg-2));
-    background-size: 100% 720px, 100% 720px, 100% 720px, 32px 32px, 32px 32px, 100% 100%;
-    background-attachment: scroll, scroll, scroll, scroll, scroll, fixed;
+    background-image: linear-gradient(180deg, var(--bg-1), var(--bg-2));
+    background-attachment: fixed;
   }
   ::selection{ background: var(--accent-glow); color: var(--ink); }
 
-  .page{ position: relative; overflow-x: hidden; }
-  .scatter-layer{
-    position: absolute; inset: 0; z-index: -1;
-    overflow: hidden; pointer-events: none;
+  .page{ position: relative; z-index: 1; overflow-x: hidden; }
+
+  /* ---------- cursor effects ---------- */
+  #cloudCanvas, #trailCanvas{
+    position: fixed; inset: 0; width: 100%; height: 100%;
+    pointer-events: none;
   }
-  .deco{ position: absolute; pointer-events: none; animation: drift 7s ease-in-out infinite; }
-  .deco.tooth{
-    width: 44px; height: 3px; border-radius: 2px;
-    background: linear-gradient(90deg, #EFE4C6, #EFE4C6 40%, #86BFAE 60%, #86BFAE);
-    opacity: 0.4;
-  }
-  .deco.stick{
-    width: 62px; height: 10px; border-radius: 5px;
-    background: linear-gradient(90deg, #EFE4C6, #9ED0C1);
-    box-shadow: inset 0 0 0 1px rgba(46,92,125,0.18);
-    opacity: 0.35;
-  }
-  .deco.bridge svg{ width: 100px; height: auto; opacity: 0.3; display:block; }
-  @keyframes drift{
-    0%, 100%{ transform: translateY(0) rotate(var(--r, 0deg)); }
-    50%{ transform: translateY(-9px) rotate(calc(var(--r, 0deg) + 4deg)); }
-  }
+  #cloudCanvas{ z-index: 0; }
+  #trailCanvas{ z-index: 1000; }
 
   a{ color: inherit; }
   .mono{ font-family: 'IBM Plex Mono', ui-monospace, monospace; }
@@ -284,65 +263,180 @@
     .skill-group.wide{ grid-row: auto; }
   }
 
-  /* ---------- projects ---------- */
-  .projects-grid{
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 18px;
-  }
-  @media (max-width: 760px){ .projects-grid{ grid-template-columns: 1fr; } }
-
-  .project{
-    padding: 24px clamp(18px,3vw,26px);
-    display: flex; flex-direction: column;
+  /* ---------- projects launcher ---------- */
+  #projects{ padding: 110px 0; }
+  .launcher-stage{
     position: relative;
-    transition: transform .2s, box-shadow .2s;
+    display:flex; justify-content:center; align-items:center;
+    min-height: 340px;
   }
-  .project:hover{ transform: translateY(-3px); box-shadow: var(--shadow-hover); }
-  .project::before{
-    content:""; position:absolute; left: 0; top: 22px; bottom: 22px; width: 3px;
-    border-radius: 0 3px 3px 0; background: var(--accent);
-    opacity: 0; transition: opacity .2s;
+  .launcher{
+    position: relative; z-index: 2;
+    appearance: none; border: 2px solid var(--ink); background: transparent;
+    color: var(--ink); cursor: pointer;
+    font: inherit; text-align: left;
+    padding: clamp(22px,4vw,36px) clamp(28px,6vw,64px);
+    border-radius: 24px;
+    overflow: hidden;
+    transition: color .35s ease, transform .35s ease, box-shadow .35s ease;
   }
-  .project:hover::before{ opacity: 1; }
-  .project-num{
-    font-family:'IBM Plex Mono', monospace; font-size: 12px; color: var(--accent); font-weight: 600;
+  .launcher::before{
+    content:""; position:absolute; inset: 0; z-index: -1;
+    background: var(--ink);
+    transform: translateY(101%);
+    transition: transform .45s cubic-bezier(.7,0,.2,1);
   }
-  .project-head{ display:flex; flex-direction: column; gap: 8px; margin: 6px 0 14px; }
-  .project-head h3{ font-size: 1.15rem; line-height: 1.3; }
-  .project-role{
-    align-self: flex-start;
-    font-family:'IBM Plex Mono', monospace;
-    font-size: 11px; font-weight: 500;
-    color: var(--line);
-    background: rgba(46,92,125,0.08);
-    padding: 3px 9px; border-radius: 6px;
-    letter-spacing: 0.04em;
+  .launcher:hover, .launcher:focus-visible{ color: #fff; transform: scale(1.02); box-shadow: var(--shadow-hover); }
+  .launcher:hover::before, .launcher:focus-visible::before{ transform: translateY(0); }
+  .launcher .l-top{
+    display:flex; justify-content: space-between; gap: 24px;
+    font-family:'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .08em;
   }
-  .project ul{ margin: 0; padding-left: 18px; color: var(--muted); }
-  .project li{ margin-bottom: 8px; font-size: 14.5px; }
-  .project li::marker{ color: var(--accent); }
-  .project li:last-child{ margin-bottom:0; }
+  .launcher .l-top .n{ color: var(--accent); font-weight: 600; }
+  .launcher .l-word{
+    display:block;
+    font-size: clamp(3.2rem, 11vw, 7.5rem);
+    font-weight: 700; line-height: .95; letter-spacing: -0.045em;
+    margin: 8px 0 10px;
+  }
+  .launcher .l-bottom{
+    display:flex; align-items:center; gap: 10px;
+    font-size: 15px; font-weight: 500; opacity: .75;
+  }
+  .launcher .l-bottom svg{ width: 18px; height: 18px; transition: transform .3s; }
+  .launcher:hover .l-bottom svg{ transform: translateX(5px); }
 
-  .project-media{ margin-top: 18px; }
-  .project-media video{
-    width: 100%; display: block;
-    border-radius: 10px;
+  .peek{
+    position: absolute; z-index: 1;
+    left: 50%; top: 50%;
+    width: 210px;
+    padding: 14px 16px;
+    font: inherit; color: var(--ink); text-align: left;
+    background: var(--panel-solid);
     border: 1px solid var(--line-faint);
-    background: #0c1a26;
-    max-height: 320px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-hover);
+    cursor: pointer;
+    opacity: 0;
+    transform: translate(-50%,-50%) scale(.6) rotate(0deg);
+    transition: transform .5s cubic-bezier(.2,.9,.25,1.2), opacity .35s ease;
+    pointer-events: none;
+  }
+  .peek .p-num{ font-family:'IBM Plex Mono', monospace; font-size: 11px; color: var(--accent); font-weight: 600; }
+  .peek .p-title{ display:block; margin-top: 4px; font-weight: 600; font-size: 14px; line-height: 1.3; }
+  .peek .p-role{ display:block; margin-top: 4px; font-family:'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: .04em; }
+  .launcher-stage.peeking .peek{ opacity: 1; pointer-events: auto; }
+  .launcher-stage.peeking .peek.p1{ transform: translate(calc(-50% - 390px), calc(-50% - 95px)) rotate(-7deg); transition-delay: 0s; }
+  .launcher-stage.peeking .peek.p2{ transform: translate(calc(-50% + 390px), calc(-50% - 105px)) rotate(6deg); transition-delay: .06s; }
+  .launcher-stage.peeking .peek.p3{ transform: translate(calc(-50% + 370px), calc(-50% + 110px)) rotate(-4deg); transition-delay: .12s; }
+  .launcher-stage.peeking .peek:hover{ box-shadow: 0 0 0 2px var(--accent), var(--shadow-hover); }
+  @media (max-width: 900px), (hover: none){
+    .peek{ display:none; }
   }
 
-  /* ---------- featured project (in progress) ---------- */
-  .project.featured{ grid-column: 1 / -1; padding: 0; overflow: hidden; }
-  .featured-inner{ display:grid; grid-template-columns: 1fr 1.1fr; }
-  .featured-text{ padding: 26px clamp(18px,3vw,30px); }
-  .featured-top{ display:flex; align-items:center; gap: 10px; flex-wrap: wrap; }
+  /* ---------- project viewer (full screen, scroll through) ---------- */
+  .viewer{
+    position: fixed; inset: 0; z-index: 500;
+    background: #0B1B2B;
+    color: #fff;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    overscroll-behavior: contain;
+    opacity: 0; visibility: hidden;
+    transition: opacity .4s ease, visibility 0s linear .4s;
+  }
+  .viewer.open{ opacity: 1; visibility: visible; transition: opacity .4s ease; }
+  .viewer::before{
+    content:""; position: fixed; inset: 0; pointer-events:none;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .v-bar{
+    position: fixed; z-index: 3; left: 0; right: 0; top: 0;
+    display:flex; justify-content: space-between; align-items:center;
+    padding: 18px var(--gutter);
+    font-family:'IBM Plex Mono', monospace; font-size: 13px;
+    pointer-events: none;
+    background: linear-gradient(#0B1B2B 55%, rgba(11,27,43,0));
+  }
+  .v-count{ letter-spacing: .06em; }
+  .v-count b{ color: var(--accent); font-size: 22px; font-weight: 600; }
+  .v-close{
+    pointer-events: auto;
+    appearance:none; cursor:pointer;
+    font: inherit; color: #fff;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 999px;
+    padding: 8px 16px;
+    transition: background .15s;
+  }
+  .v-close:hover{ background: rgba(255,255,255,0.18); }
+  .v-dots{
+    position: fixed; z-index: 3; right: clamp(10px, 2vw, 26px); top: 50%;
+    transform: translateY(-50%);
+    display:flex; flex-direction: column; gap: 10px;
+  }
+  .v-dots button{
+    appearance:none; border:none; padding: 0; cursor:pointer;
+    width: 8px; height: 8px; border-radius: 999px;
+    background: rgba(255,255,255,0.3);
+    transition: height .3s, background .3s;
+  }
+  .v-dots button.on{ height: 26px; background: var(--accent); }
+
+  .slide{
+    position: relative; z-index: 1;
+    min-height: 100vh; min-height: 100dvh;
+    scroll-snap-align: start;
+    display:flex; align-items:center;
+    padding: 90px var(--gutter) 60px;
+  }
+  .slide-inner{
+    width: 100%; max-width: 1120px; margin: 0 auto;
+    display:grid; grid-template-columns: 1fr; gap: clamp(24px, 4vw, 56px);
+    align-items: center;
+  }
+  .slide.has-media .slide-inner{ grid-template-columns: 1fr 1.1fr; }
+  .slide:not(.has-media) .slide-text{ max-width: 760px; }
+  @media (max-width: 860px){ .slide.has-media .slide-inner{ grid-template-columns: 1fr; } }
+
+  .slide-text > *{ opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+  .slide.active .slide-text > *{ opacity: 1; transform: none; }
+  .slide.active .slide-text > *:nth-child(2){ transition-delay: .06s; }
+  .slide.active .slide-text > *:nth-child(3){ transition-delay: .12s; }
+  .slide.active .slide-text > *:nth-child(4){ transition-delay: .18s; }
+  .slide.active .slide-text > *:nth-child(5){ transition-delay: .24s; }
+  .slide-media{ opacity: 0; transform: scale(.96); transition: opacity .7s ease .15s, transform .7s ease .15s; }
+  .slide.active .slide-media{ opacity: 1; transform: none; }
+
+  .s-meta{ display:flex; gap: 10px; align-items:center; flex-wrap: wrap; }
+  .s-num{ font-family:'IBM Plex Mono', monospace; font-size: 13px; color: var(--accent); font-weight: 600; }
+  .s-role{
+    font-family:'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .05em;
+    color: rgba(255,255,255,0.75);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 3px 10px; border-radius: 999px;
+  }
+  .slide h3{
+    margin-top: 16px;
+    font-size: clamp(2rem, 5vw, 3.6rem);
+    font-weight: 700; line-height: 1.04; letter-spacing: -0.035em;
+  }
+  .slide.has-media h3{ font-size: clamp(1.8rem, 3.2vw, 2.7rem); }
+  .slide.has-media li{ margin-bottom: 8px; }
+  .slide ul{ margin: 22px 0 0; padding-left: 20px; color: rgba(255,255,255,0.78); }
+  .slide li{ margin-bottom: 10px; font-size: clamp(14.5px, 1.4vw, 16px); }
+  .slide li:last-child{ margin-bottom: 0; }
+  .slide li::marker{ color: var(--accent); }
+
   .status{
     display:inline-flex; align-items:center; gap: 7px;
     font-family:'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600;
     letter-spacing: 0.05em;
-    color: #9A5A0C; background: var(--accent-soft);
+    color: var(--accent-glow); background: rgba(232,149,43,0.18);
     padding: 3px 10px; border-radius: 999px;
   }
   .status::before{
@@ -351,20 +445,24 @@
     animation: pulse 1.6s ease-in-out infinite;
   }
   @keyframes pulse{ 0%,100%{ opacity: 1; } 50%{ opacity: .3; } }
-  .project.featured .project-head h3{ font-size: 1.35rem; }
-  .subsystems{ margin-top: 18px; }
-  .subsystems .tag-label{ display:block; margin-bottom: 8px; }
-  .subsystems .chips{ margin-top: 0; }
-  .subsystems .chip{ font-size: 12.5px; padding: 4px 10px; }
 
-  .schematic{
+  .subsystems{ margin-top: 22px; }
+  .subsystems .tag-label{ display:block; margin-bottom: 8px; color: rgba(255,255,255,0.5); }
+  .subsystems .chips{ margin-top: 0; }
+  .subsystems .chip{
+    font-size: 12.5px; padding: 4px 10px;
+    background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.14); color: #fff;
+  }
+
+  .schematic, .slide-media video{
     margin: 0;
     background: #000;
-    display:flex; flex-direction: column;
-    border-left: 1px solid var(--line-faint);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 14px;
+    overflow: hidden;
   }
-  .schematic a{ display:block; flex: 1; position: relative; cursor: zoom-in; }
-  .schematic img{ width: 100%; height: 100%; object-fit: contain; display:block; }
+  .schematic a{ display:block; position: relative; cursor: zoom-in; }
+  .schematic img{ width: 100%; display:block; max-height: 62vh; object-fit: contain; }
   .schematic .zoom-hint{
     position:absolute; right: 10px; top: 10px;
     font-family:'IBM Plex Mono', monospace; font-size: 10.5px;
@@ -378,10 +476,21 @@
     color: rgba(255,255,255,0.6);
     border-top: 1px solid rgba(255,255,255,0.1);
   }
-  @media (max-width: 860px){
-    .featured-inner{ grid-template-columns: 1fr; }
-    .schematic{ border-left: none; border-top: 1px solid var(--line-faint); }
+  .slide-media video{ width: 100%; display:block; max-height: 70vh; }
+
+  .scroll-hint{
+    position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%);
+    font-family:'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .1em;
+    color: rgba(255,255,255,0.55);
+    display:flex; flex-direction: column; align-items:center; gap: 6px;
   }
+  .scroll-hint::after{
+    content:""; width: 1px; height: 28px;
+    background: linear-gradient(rgba(255,255,255,0.6), transparent);
+    animation: hint 1.6s ease-in-out infinite;
+  }
+  @keyframes hint{ 0%{ transform: scaleY(0); transform-origin: top; } 50%{ transform: scaleY(1); transform-origin: top; } 51%{ transform-origin: bottom; } 100%{ transform: scaleY(0); transform-origin: bottom; } }
+  body.viewer-open{ overflow: hidden; }
 
   /* ---------- awards ---------- */
   .awards-layout{ display:grid; grid-template-columns: 1fr auto; gap: 24px; align-items: start; }
@@ -477,7 +586,8 @@
   .reveal.in{ opacity: 1; transform: none; }
 
   @media (prefers-reduced-motion: reduce){
-    .deco{ animation: none; }
+    .slide-text > *, .slide-media{ opacity: 1; transform: none; transition: none; }
+    .peek{ transition: opacity .2s; }
     path.trace{ animation: none; stroke-dashoffset: 0; }
     circle.led{ animation: none; fill: var(--accent-glow); }
     .reveal{ opacity: 1; transform: none; transition: none; }
@@ -486,8 +596,9 @@
 </style>
 </head>
 <body>
+<canvas id="cloudCanvas" aria-hidden="true"></canvas>
+<canvas id="trailCanvas" aria-hidden="true"></canvas>
 <div class="page">
-  <div class="scatter-layer" id="scatterLayer" aria-hidden="true"></div>
 
   <header class="toprail">
     <div class="wrap">
@@ -526,7 +637,7 @@
 
       <div class="stats">
         <div class="stat">
-          <div class="big">Guinness World Record</div>
+          <div class="big">Guinness World Record Holder</div>
           <div class="small">Tallest toothpick structure · 2025</div>
         </div>
         <div class="stat">
@@ -605,107 +716,124 @@
     <div class="wrap">
       <div class="section-head reveal">
         <div class="kicker"><span class="num">03</span> Projects</div>
-        <h2>Things I've built</h2>
       </div>
 
-      <div class="projects-grid">
-        <article class="card project featured reveal">
-          <div class="featured-inner">
-            <div class="featured-text">
-              <div class="featured-top">
-                <span class="project-num">P—00</span>
-                <span class="status">IN PROGRESS</span>
-              </div>
-              <div class="project-head">
-                <h3>Flappy Bird, Built from Discrete Electrical Components</h3>
-                <span class="project-role">NO MICROCONTROLLER · NO SOFTWARE</span>
-              </div>
-              <ul>
-                <li>Engineered position-tracking logic for the bird and pipes using several cascaded 4-bit binary counters to represent x/y coordinates, replacing what would typically be software-based coordinate tracking.</li>
-                <li>Designed game logic, including scoring and collision detection, using logic gates, clock circuits, operational amplifiers, and 4-to-16 line decoders, with several feedback loops to simulate gravity and flying physics.</li>
-                <li>Developing the full circuit in KiCad, integrating discrete logic with an 8x8 LED matrix as the display for the video game.</li>
-              </ul>
-              <div class="subsystems">
-                <span class="tag-label">IN THE CURRENT SCHEMATIC</span>
-                <div class="chips">
-                  <span class="chip">555 timers (pipe x/y clocks)</span>
-                  <span class="chip">Binary counters</span>
-                  <span class="chip">4-bit adder</span>
-                  <span class="chip">Pipe-gap encoder</span>
-                  <span class="chip">Pipe / bird multiplexer</span>
-                  <span class="chip">3-to-8 decoders</span>
-                  <span class="chip">8x8 LED matrix</span>
-                  <span class="chip">7-segment score</span>
-                </div>
+      <div class="launcher-stage reveal" id="launcherStage">
+        <button class="launcher" id="openViewer" type="button" aria-haspopup="dialog">
+          <span class="l-top"><span>SELECTED WORK</span><span class="n" id="projCount">05</span></span>
+          <span class="l-word">Projects</span>
+          <span class="l-bottom">Click to scroll through them
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+        </button>
+        <!-- hover previews are generated from the slides below -->
+      </div>
+    </div>
+
+    <!-- ---- Full-screen project viewer. Each .slide is one project. ---- -->
+    <div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-label="Projects" tabindex="-1">
+      <div class="v-bar">
+        <span class="v-count"><b id="vNow">01</b> / <span id="vTotal">05</span></span>
+        <button class="v-close" id="closeViewer" type="button">Close ✕</button>
+      </div>
+      <div class="v-dots" id="vDots"></div>
+
+      <article class="slide has-media">
+        <div class="slide-inner">
+          <div class="slide-text">
+            <div class="s-meta"><span class="s-num">P—00</span><span class="status">IN PROGRESS</span></div>
+            <h3>Flappy Bird, Built from Discrete Electrical Components</h3>
+            <div class="s-meta" style="margin-top:14px"><span class="s-role">NO MICROCONTROLLER · NO SOFTWARE</span></div>
+            <ul>
+              <li>Engineered position-tracking logic for the bird and pipes using several cascaded 4-bit binary counters to represent x/y coordinates, replacing what would typically be software-based coordinate tracking.</li>
+              <li>Designed game logic, including scoring and collision detection, using logic gates, clock circuits, operational amplifiers, and 4-to-16 line decoders, with several feedback loops to simulate gravity and flying physics.</li>
+              <li>Developing the full circuit in KiCad, integrating discrete logic with an 8x8 LED matrix as the display for the video game.</li>
+            </ul>
+            <div class="subsystems">
+              <span class="tag-label">IN THE CURRENT SCHEMATIC</span>
+              <div class="chips">
+                <span class="chip">555 timers (pipe x/y clocks)</span>
+                <span class="chip">Binary counters</span>
+                <span class="chip">4-bit adder</span>
+                <span class="chip">Pipe-gap encoder</span>
+                <span class="chip">Pipe / bird multiplexer</span>
+                <span class="chip">3-to-8 decoders</span>
+                <span class="chip">8x8 LED matrix</span>
+                <span class="chip">7-segment score</span>
               </div>
             </div>
-            <figure class="schematic">
-              <a href="media/flappy-bird-schematic.png" target="_blank" rel="noopener">
-                <img src="media/flappy-bird-schematic.png" alt="Work-in-progress schematic of the Flappy Bird circuit: 555 timer clocks, binary counters, adder, decoders, multiplexers, and an 8x8 LED matrix" loading="lazy">
-                <span class="zoom-hint">OPEN FULL SIZE ↗</span>
-              </a>
-              <figcaption class="cap">
-                <span>FIG. 3 — CURRENT SCHEMATIC</span>
-                <span>WORK IN PROGRESS</span>
-              </figcaption>
-            </figure>
           </div>
-        </article>
+          <figure class="schematic slide-media">
+            <a href="media/flappy-bird-schematic.png" target="_blank" rel="noopener">
+              <img src="media/flappy-bird-schematic.png" alt="Work-in-progress schematic of the Flappy Bird circuit: 555 timer clocks, binary counters, adder, decoders, multiplexers, and an 8x8 LED matrix" loading="lazy">
+              <span class="zoom-hint">OPEN FULL SIZE ↗</span>
+            </a>
+            <figcaption class="cap">
+              <span>FIG. 3 — CURRENT SCHEMATIC</span>
+              <span>WORK IN PROGRESS</span>
+            </figcaption>
+          </figure>
+        </div>
+        <div class="scroll-hint">SCROLL</div>
+      </article>
 
-        <article class="card project reveal">
-          <span class="project-num">P—01</span>
-          <div class="project-head">
+      <article class="slide">
+        <div class="slide-inner">
+          <div class="slide-text">
+            <div class="s-meta"><span class="s-num">P—01</span><span class="s-role">LEAD ELECTRICAL DESIGNER</span></div>
             <h3>FIRST Robotics Competition — Robot Design</h3>
-            <span class="project-role">LEAD ELECTRICAL DESIGNER</span>
+            <ul>
+              <li>Integrated analog sensors and control systems — cameras, motor encoders, and optical sensors — for game element tracking, improving odometry accuracy by 45% and enabling precise goal-scoring localization.</li>
+              <li>Built data-processing pipelines converting sensor input into control signals, using encoder feedback for PID-based motor control and AprilTag detection.</li>
+            </ul>
           </div>
-          <ul>
-            <li>Integrated analog sensors and control systems — cameras, motor encoders, and optical sensors — for game element tracking, improving odometry accuracy by 45% and enabling precise goal-scoring localization.</li>
-            <li>Built data-processing pipelines converting sensor input into control signals, using encoder feedback for PID-based motor control and AprilTag detection.</li>
-          </ul>
-        </article>
+        </div>
+      </article>
 
-        <article class="card project reveal">
-          <span class="project-num">P—02</span>
-          <div class="project-head">
+      <article class="slide has-media">
+        <div class="slide-inner">
+          <div class="slide-text">
+            <div class="s-meta"><span class="s-num">P—02</span><span class="s-role">PERSONAL PROJECT</span></div>
             <h3>Arduino LED Array &amp; Embedded Control System</h3>
-            <span class="project-role">PERSONAL PROJECT</span>
+            <ul>
+              <li>Designed and built an interactive 30+ LED array driven by an Arduino, written in C++.</li>
+              <li>Soldered and wired the full circuit; implemented PWM for brightness control and dynamic lighting patterns.</li>
+              <li>Wrote embedded software processing analog potentiometer input and digital button input to drive multiple LED outputs, debugging connections along the way.</li>
+            </ul>
           </div>
-          <ul>
-            <li>Designed and built an interactive 30+ LED array driven by an Arduino, written in C++.</li>
-            <li>Soldered and wired the full circuit; implemented PWM for brightness control and dynamic lighting patterns.</li>
-            <li>Wrote embedded software processing analog potentiometer input and digital button input to drive multiple LED outputs, debugging connections along the way.</li>
-          </ul>
-          <div class="project-media">
+          <div class="slide-media">
             <video src="media/Led%20clip%201.MOV" controls muted playsinline preload="metadata"></video>
           </div>
-        </article>
+        </div>
+      </article>
 
-        <article class="card project reveal">
-          <span class="project-num">P—03</span>
-          <div class="project-head">
+      <article class="slide">
+        <div class="slide-inner">
+          <div class="slide-text">
+            <div class="s-meta"><span class="s-num">P—03</span><span class="s-role">DUAL CREDIT ELECTRONICS PROJECT</span></div>
             <h3>Digital Birthday Display Circuit</h3>
-            <span class="project-role">DUAL CREDIT ELECTRONICS PROJECT</span>
+            <ul>
+              <li>Designed a sequential digital circuit that displays a pre-stored date across six seven-segment displays on a button press.</li>
+              <li>Implemented shift registers, D and JK flip-flops, and AND/OR gate logic to store and transition between circuit states, then wired, tested, and debugged the hardware.</li>
+            </ul>
           </div>
-          <ul>
-            <li>Designed a sequential digital circuit that displays a pre-stored date across six seven-segment displays on a button press.</li>
-            <li>Implemented shift registers, D and JK flip-flops, and AND/OR gate logic to store and transition between circuit states, then wired, tested, and debugged the hardware.</li>
-          </ul>
-        </article>
+        </div>
+      </article>
 
-        <article class="card project reveal">
-          <span class="project-num">P—04</span>
-          <div class="project-head">
+      <article class="slide">
+        <div class="slide-inner">
+          <div class="slide-text">
+            <div class="s-meta"><span class="s-num">P—04</span><span class="s-role">AI-ASSISTED HARDWARE ENGINEERING</span></div>
             <h3>Transformium AI Swarm</h3>
-            <span class="project-role">AI-ASSISTED HARDWARE ENGINEERING</span>
+            <ul>
+              <li>Designed a multi-agent AI system where specialized agents across Mechanical, Electrical, and Systems teams collaborate under a chief coordinating agent to reduce single-model blind spots in combat-robot design.</li>
+              <li>Structured the workflow around six iteration stages — define/validate, design/model, build/integrate, test/analyze, iterate/optimize, and deploy/learn — so agents converge on a design in rapid cycles rather than one long pass.</li>
+              <li>Built conflict detection so the swarm flags contradictions as requirements change and automatically adapts the mechanical design to resolve them.</li>
+              <li>Grounded agent output in deterministic validation, physical-margin checks, and PyBullet rigid-body simulation, running the collaboration in the cloud to keep it reliable and scalable.</li>
+            </ul>
           </div>
-          <ul>
-            <li>Designed a multi-agent AI system where specialized agents across Mechanical, Electrical, and Systems teams collaborate under a chief coordinating agent to reduce single-model blind spots in combat-robot design.</li>
-            <li>Structured the workflow around six iteration stages — define/validate, design/model, build/integrate, test/analyze, iterate/optimize, and deploy/learn — so agents converge on a design in rapid cycles rather than one long pass.</li>
-            <li>Built conflict detection so the swarm flags contradictions as requirements change and automatically adapts the mechanical design to resolve them.</li>
-            <li>Grounded agent output in deterministic validation, physical-margin checks, and PyBullet rigid-body simulation, running the collaboration in the cloud to keep it reliable and scalable.</li>
-          </ul>
-        </article>
-      </div>
+        </div>
+      </article>
     </div>
   </section>
 
@@ -846,31 +974,176 @@
   }
   ledRow.innerHTML = ledSvg;
 
-  // ---- scattered toothpicks / popsicle sticks / bridges -----------------
-  // Decorative nod to the toothpick world record. Delete this block plus
-  // the #scatterLayer div to keep the background plain.
-  const scatterLayer = document.getElementById('scatterLayer');
-  const bridgeSvg = `<svg viewBox="0 0 120 50" xmlns="http://www.w3.org/2000/svg">
-    <path d="M5,40 L115,40 M5,40 L5,15 M115,40 L115,15 M5,15 L60,5 L115,15 M5,40 L60,20 L115,40 M60,5 L60,20"
-      stroke="var(--line)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>`;
-  function rand(min, max){ return Math.random() * (max - min) + min; }
-  const pieces = [...Array(10).fill('tooth'), ...Array(6).fill('stick'), ...Array(3).fill('bridge')];
-  const frag = document.createDocumentFragment();
-  pieces.forEach(type => {
-    const el = document.createElement('div');
-    el.className = `deco ${type}`;
-    // keep decorations near the edges so they don't sit behind text
-    const left = Math.random() < 0.5 ? rand(0, 8) : rand(88, 95);
-    el.style.top = rand(4, 96) + '%';
-    el.style.left = left + '%';
-    el.style.setProperty('--r', rand(-35, 35) + 'deg');
-    el.style.animationDuration = rand(5, 9) + 's';
-    el.style.animationDelay = rand(0, 5) + 's';
-    if(type === 'bridge') el.innerHTML = bridgeSvg;
-    frag.appendChild(el);
+  // ---- cursor effects: dark-blue clouds behind the page + orange trail ----
+  const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const cloudCanvas = document.getElementById('cloudCanvas');
+  const trailCanvas = document.getElementById('trailCanvas');
+
+  if(finePointer && !reduceMotion){
+    const cctx = cloudCanvas.getContext('2d');
+    const tctx = trailCanvas.getContext('2d');
+    let dpr = 1;
+    function sizeCanvases(){
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      [cloudCanvas, trailCanvas].forEach(c => {
+        c.width = innerWidth * dpr;
+        c.height = innerHeight * dpr;
+      });
+      cctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      tctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    sizeCanvases();
+    addEventListener('resize', sizeCanvases);
+
+    const blobs = [];   // soft dark-blue puffs that make up the cloud
+    const trail = [];   // recent cursor points for the orange trail
+    const TRAIL_MS = 450;
+    let lastX = null, lastY = null, running = false;
+
+    addEventListener('pointermove', e => {
+      const now = performance.now();
+      trail.push({ x: e.clientX, y: e.clientY, t: now });
+
+      // drop a few overlapping puffs every ~22px of movement -> cloudy shape
+      const dist = lastX === null ? Infinity : Math.hypot(e.clientX - lastX, e.clientY - lastY);
+      if(dist > 22){
+        for(let i = 0; i < 3; i++){
+          blobs.push({
+            x: e.clientX + (Math.random() - 0.5) * 70,
+            y: e.clientY + (Math.random() - 0.5) * 50,
+            r: 50 + Math.random() * 90,
+            born: now,
+            life: 2200 + Math.random() * 1600,
+            vy: -0.006 - Math.random() * 0.01
+          });
+        }
+        if(blobs.length > 260) blobs.splice(0, blobs.length - 260);
+        lastX = e.clientX; lastY = e.clientY;
+      }
+      if(!running){ running = true; requestAnimationFrame(frame); }
+    }, { passive: true });
+
+    function frame(now){
+      // clouds
+      cctx.clearRect(0, 0, innerWidth, innerHeight);
+      for(let i = blobs.length - 1; i >= 0; i--){
+        const b = blobs[i];
+        const age = (now - b.born) / b.life;
+        if(age >= 1){ blobs.splice(i, 1); continue; }
+        // quick fade in, slow fade out
+        const a = age < 0.12 ? age / 0.12 : 1 - (age - 0.12) / 0.88;
+        const r = b.r * (0.8 + age * 0.5);
+        const y = b.y + b.vy * (now - b.born);
+        const g = cctx.createRadialGradient(b.x, y, 0, b.x, y, r);
+        g.addColorStop(0, `rgba(14, 44, 88, ${0.30 * a})`);
+        g.addColorStop(0.55, `rgba(20, 58, 106, ${0.15 * a})`);
+        g.addColorStop(1, 'rgba(24, 64, 112, 0)');
+        cctx.fillStyle = g;
+        cctx.beginPath();
+        cctx.arc(b.x, y, r, 0, Math.PI * 2);
+        cctx.fill();
+      }
+
+      // orange trail
+      tctx.clearRect(0, 0, innerWidth, innerHeight);
+      while(trail.length && now - trail[0].t > TRAIL_MS) trail.shift();
+      tctx.lineCap = 'round';
+      tctx.lineJoin = 'round';
+      for(let i = 1; i < trail.length; i++){
+        const p0 = trail[i - 1], p1 = trail[i];
+        const k = 1 - (now - p1.t) / TRAIL_MS;   // 1 = newest, 0 = oldest
+        tctx.strokeStyle = `rgba(240, 150, 40, ${0.85 * k})`;
+        tctx.lineWidth = 1 + 5 * k;
+        tctx.beginPath();
+        tctx.moveTo(p0.x, p0.y);
+        tctx.lineTo(p1.x, p1.y);
+        tctx.stroke();
+      }
+
+      if(blobs.length || trail.length){ requestAnimationFrame(frame); }
+      else { running = false; }
+    }
+  }
+
+  // ---- projects: launcher, hover previews, full-screen viewer -----------
+  const viewer = document.getElementById('viewer');
+  const slides = [...viewer.querySelectorAll('.slide')];
+  const launcher = document.getElementById('openViewer');
+  const stage = document.getElementById('launcherStage');
+  const dotsWrap = document.getElementById('vDots');
+  const pad = n => String(n).padStart(2, '0');
+
+  document.getElementById('projCount').textContent = pad(slides.length);
+  document.getElementById('vTotal').textContent = pad(slides.length);
+
+  const dots = slides.map((s, i) => {
+    const d = document.createElement('button');
+    d.type = 'button';
+    d.setAttribute('aria-label', 'Go to project ' + (i + 1));
+    d.addEventListener('click', () => s.scrollIntoView({ behavior: 'smooth' }));
+    dotsWrap.appendChild(d);
+    return d;
   });
-  scatterLayer.appendChild(frag);
+
+  const io2 = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(!e.isIntersecting) return;
+      const i = slides.indexOf(e.target);
+      slides.forEach(s => s.classList.toggle('active', s === e.target));
+      dots.forEach((d, j) => d.classList.toggle('on', j === i));
+      document.getElementById('vNow').textContent = pad(i + 1);
+    });
+  }, { root: viewer, threshold: 0.55 });
+  slides.forEach(s => io2.observe(s));
+
+  function openViewer(i = 0){
+    viewer.classList.add('open');
+    document.body.classList.add('viewer-open');
+    viewer.scrollTop = slides[i].offsetTop;
+    viewer.focus({ preventScroll: true });
+  }
+  function closeViewer(){
+    viewer.classList.remove('open');
+    document.body.classList.remove('viewer-open');
+    viewer.querySelectorAll('video').forEach(v => v.pause());
+    launcher.focus({ preventScroll: true });
+  }
+  launcher.addEventListener('click', () => openViewer(0));
+  document.getElementById('closeViewer').addEventListener('click', closeViewer);
+  document.addEventListener('keydown', e => {
+    if(!viewer.classList.contains('open')) return;
+    if(e.key === 'Escape') closeViewer();
+    const cur = slides.findIndex(s => s.classList.contains('active'));
+    if(['ArrowDown', 'PageDown', ' '].includes(e.key) && cur < slides.length - 1){
+      e.preventDefault(); slides[cur + 1].scrollIntoView({ behavior: 'smooth' });
+    }
+    if(['ArrowUp', 'PageUp'].includes(e.key) && cur > 0){
+      e.preventDefault(); slides[cur - 1].scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+
+  // little preview cards that pop out around the button on hover
+  const peeks = slides.slice(0, 3).map((s, i) => {
+    const p = document.createElement('button');
+    p.type = 'button';
+    p.className = 'peek p' + (i + 1);
+    p.tabIndex = -1;
+    p.innerHTML =
+      `<span class="p-num">${s.querySelector('.s-num').textContent}</span>` +
+      `<span class="p-title">${s.querySelector('h3').textContent}</span>` +
+      `<span class="p-role">${(s.querySelector('.s-role') || {}).textContent || ''}</span>`;
+    p.addEventListener('click', () => openViewer(i));
+    stage.appendChild(p);
+    return p;
+  });
+  let hideTimer;
+  const showPeeks = () => { clearTimeout(hideTimer); stage.classList.add('peeking'); };
+  const hidePeeks = () => { hideTimer = setTimeout(() => stage.classList.remove('peeking'), 220); };
+  [launcher, ...peeks].forEach(el => {
+    el.addEventListener('mouseenter', showPeeks);
+    el.addEventListener('mouseleave', hidePeeks);
+  });
 
   // ---- fade sections in as you scroll ----------------------------------
   if('IntersectionObserver' in window){
